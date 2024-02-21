@@ -1,0 +1,163 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id                  Int                 @id @default(autoincrement())
+  userName            String              @unique
+  passHash            String
+  email               String
+  messageState        MessageState        @default(All)
+  friendState         FriendState         @default(All)
+  commentHistoryState CommentHistoryState @default(All)
+  youtube             String              @default("")
+  twitter             String              @default("")
+  twitch              String              @default("")
+  modLevel            ModLevel            @default(None)
+  commentColor        String              @default("#ffffff")
+  modRequested        Boolean             @default(false)
+  isDisabled          Boolean             @default(false)
+  registerDate        DateTime            @default(now())
+  blockList           BlockList[]
+  comments            Comments[]
+  friendList          FriendList[]
+  friendRequests      FriendRequests[]
+  messages            Messages[]
+  userComments        UserComments[]
+  stats               UserStats?
+}
+
+model UserStats {
+  userId        Int   @id @unique
+  stars         Int   @default(0)
+  moons         Int   @default(0)
+  secretCoins   Int   @default(0)
+  userCoins     Int   @default(0)
+  demons        Int   @default(0)
+  creatorPoints Int   @default(0)
+  diamonds      Int   @default(0)
+  iconType      Int   @default(0)
+  iconCube      Int   @default(1)
+  iconShip      Int   @default(1)
+  iconBall      Int   @default(1)
+  iconUfo       Int   @default(1)
+  iconWave      Int   @default(1)
+  iconRobot     Int   @default(1)
+  iconSpider    Int   @default(1)
+  iconSwing     Int   @default(1)
+  iconJetpack   Int   @default(1)
+  iconGlow      Int   @default(0)
+  iconExplosion Int   @default(0)
+  firstColor    Int   @default(0)
+  secondColor   Int   @default(3)
+  thirdColor    Int   @default(-1)
+  user          Users @relation(fields: [userId], references: [id])
+}
+
+model UserComments {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  comment    String
+  likes      Int      @default(0)
+  isSpam     Boolean  @default(false)
+  postedDate DateTime @default(now())
+  user       Users    @relation(fields: [userId], references: [id])
+}
+
+model Comments {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  itemId      Int
+  comment     String
+  percent     Int
+  likes       Int      @default(0)
+  isSpam      Boolean  @default(false)
+  isLevelList Boolean  @default(false)
+  postedDate  DateTime @default(now())
+  user        Users    @relation(fields: [userId], references: [id])
+}
+
+model Messages {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  toUserId   Int
+  subject    String
+  body       String
+  isNew      Boolean  @default(true)
+  postedDate DateTime @default(now())
+  user       Users    @relation(fields: [userId], references: [id])
+}
+
+model FriendList {
+  id           Int     @id @default(autoincrement())
+  firstUserId  Int
+  secondUserId Int
+  isNew        Boolean @default(true)
+  user         Users   @relation(fields: [firstUserId], references: [id])
+}
+
+model FriendRequests {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  toUserId   Int
+  comment    String
+  isNew      Boolean  @default(true)
+  postedDate DateTime @default(now())
+  user       Users    @relation(fields: [userId], references: [id])
+}
+
+model BlockList {
+  id           Int   @id @default(autoincrement())
+  firstUserId  Int
+  secondUserId Int
+  user         Users @relation(fields: [firstUserId], references: [id])
+}
+
+model Artists {
+  id       Int     @id @default(autoincrement())
+  name     String
+  resource String  @unique
+  songs    Songs[]
+}
+
+model Songs {
+  id         Int      @id @default(autoincrement())
+  artistId   Int
+  name       String
+  size       Float
+  resource   String   @unique
+  link       String   @unique
+  isDisabled Boolean  @default(false)
+  uploadTime DateTime @default(now())
+  artist     Artists  @relation(fields: [artistId], references: [id])
+}
+
+enum ModLevel {
+  None
+  Mod
+  ElderMod
+  ListMod
+  Admin
+}
+
+enum MessageState {
+  All
+  Friends
+  None
+}
+
+enum FriendState {
+  All
+  None
+}
+
+enum CommentHistoryState {
+  All
+  Friends
+  None
+}

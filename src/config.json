@@ -1,0 +1,30 @@
+{
+    "database": {
+        "prefix": "db"
+    },
+    "server": {
+        "name": "",
+        "domain": "",
+        "onlyRealEmails": false
+    },
+    "commentColors": {
+        "None": "#ffffff",
+        "Mod": "#FFD700",
+        "ElderMod": "#8f6ed2",
+        "ListMod": "#048af5",
+        "Admin": "#100ced"
+    },
+    "redisDb": {
+        "host": "",
+        "password": "",
+        "port": 0
+    },
+    "smtp": {
+        "host": "",
+        "port": 0,
+        "auth": {
+            "user": "",
+            "pass": ""
+        }
+    }
+}
