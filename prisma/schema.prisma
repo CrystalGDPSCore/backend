@@ -83,14 +83,14 @@ model Comments {
 }
 
 model Messages {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  toUserId   Int
-  subject    String
-  body       String
-  isNew      Boolean  @default(true)
-  postedDate DateTime @default(now())
-  user       Users    @relation(fields: [userId], references: [id])
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  recipientId Int
+  subject     String
+  body        String
+  isNew       Boolean  @default(true)
+  postedDate  DateTime @default(now())
+  user        Users    @relation(fields: [userId], references: [id])
 }
 
 model FriendList {
@@ -102,13 +102,13 @@ model FriendList {
 }
 
 model FriendRequests {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  toUserId   Int
-  comment    String
-  isNew      Boolean  @default(true)
-  postedDate DateTime @default(now())
-  user       Users    @relation(fields: [userId], references: [id])
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  recipientId Int
+  comment     String
+  isNew       Boolean  @default(true)
+  postedDate  DateTime @default(now())
+  user        Users    @relation(fields: [userId], references: [id])
 }
 
 model BlockList {
