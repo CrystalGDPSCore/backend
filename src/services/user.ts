@@ -103,25 +103,3 @@ export async function updateUserSettings(
         }
     });
 }
-
-export async function getUserFriendRequestsCount(userId: number) {
-    const friendRequestsCount = await db.friendRequests.count({
-        where: {
-            toUserId: userId,
-            isNew: true
-        }
-    });
-
-    return friendRequestsCount;
-}
-
-export async function getUserFriendsCount(userId: number) {
-    const friendsCount = await db.friendList.count({
-        where: {
-            secondUserId: userId,
-            isNew: true
-        }
-    });
-
-    return friendsCount;
-}
