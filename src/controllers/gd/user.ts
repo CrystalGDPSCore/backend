@@ -19,8 +19,6 @@ import { commentColors } from "../../config.json";
 export async function getGJUserInfoHandler(request: FastifyRequest<{ Body: getGJUserInfoInput }>, reply: FastifyReply) {
     const { targetAccountID, accountID, gjp2, secret } = request.body;
 
-    console.log(request.body);
-
     if (!checkSecret(secret, Secret.Common)) {
         return reply.send(-1);
     }
