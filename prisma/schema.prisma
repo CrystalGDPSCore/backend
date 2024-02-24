@@ -94,11 +94,11 @@ model Messages {
 }
 
 model FriendList {
-  id           Int     @id @default(autoincrement())
-  firstUserId  Int
-  secondUserId Int
-  isNew        Boolean @default(true)
-  user         Users   @relation(fields: [firstUserId], references: [id])
+  id       Int     @id @default(autoincrement())
+  userId   Int
+  friendId Int
+  isNew    Boolean @default(true)
+  user     Users   @relation(fields: [userId], references: [id])
 }
 
 model FriendRequests {
@@ -106,16 +106,15 @@ model FriendRequests {
   userId      Int
   recipientId Int
   comment     String
-  isNew       Boolean  @default(true)
   postedDate  DateTime @default(now())
   user        Users    @relation(fields: [userId], references: [id])
 }
 
 model BlockList {
-  id           Int   @id @default(autoincrement())
-  firstUserId  Int
-  secondUserId Int
-  user         Users @relation(fields: [firstUserId], references: [id])
+  id            Int   @id @default(autoincrement())
+  userId        Int
+  blockedUserId Int
+  user          Users @relation(fields: [userId], references: [id])
 }
 
 model Artists {
