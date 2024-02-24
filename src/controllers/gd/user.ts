@@ -3,6 +3,9 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { getGJUserInfoInput, requestUserAccessInput } from "../../schemas/user";
 
 import { getUserById, updateUserAccess } from "../../services/user";
+import { getNewMessagesCountByRecipientId } from "../../services/messages";
+import { getFriendRequestsCountByRecipientId, friendRequestExists } from "../../services/friendRequests";
+import { getNewFriendsByUserId, friendExists } from "../../services/friendList";
 
 import { checkSecret } from "../../utils/checks";
 import { checkUserGjp2 } from "../../utils/crypt";
@@ -15,6 +18,8 @@ import { commentColors } from "../../config.json";
 
 export async function getGJUserInfoHandler(request: FastifyRequest<{ Body: getGJUserInfoInput }>, reply: FastifyReply) {
     const { targetAccountID, accountID, gjp2, secret } = request.body;
+
+    console.log(request.body);
 
     if (!checkSecret(secret, Secret.Common)) {
         return reply.send(-1);
@@ -69,14 +74,28 @@ export async function getGJUserInfoHandler(request: FastifyRequest<{ Body: getGJ
 
     if (checkUserGjp2(gjp2, userOwn.passHash) && accountID == targetAccountID) {
         userInfoObj = Object.assign(userInfoObj, {
-            38: 0, // new messages
-            39: 0, // new friend requests
-            40: 0 // new friends
+            38: await getNewMessagesCountByRecipientId(Number(targetAccountID)),
+            39: await getFriendRequestsCountByRecipientId(Number(targetAccountID)),
+            40: await getNewFriendsByUserId(Number(targetAccountID))
         });
     } else {
-        userInfoObj = Object.assign(userInfoObj, {
-            31: 1 // friend state
-        });
+        let friendStateObj = {};
+
+        switch (true) {
+            case await friendExists(userOwn.id, userTarget.id):
+                friendStateObj = { 31: 1 };
+                break;
+            case await friendRequestExists(userOwn.id, userTarget.id):
+                friendStateObj = { 31: 4 };
+                break;
+            case await friendRequestExists(userTarget.id, userOwn.id):
+                friendStateObj = { 31: 3 };
+                break;
+            default:
+                friendStateObj = { 31: 0 };
+        }
+
+        userInfoObj = Object.assign(userInfoObj, friendStateObj);
     }
 
     return reply.send(gdObjToString(userInfoObj));
