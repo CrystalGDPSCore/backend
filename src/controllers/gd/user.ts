@@ -1,8 +1,8 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 
-import { getGJUserInfoInput, requestUserAccessInput } from "../../schemas/user";
+import { getGJUserInfoInput } from "../../schemas/user";
 
-import { getUserById, updateUserAccess } from "../../services/user";
+import { getUserById } from "../../services/user";
 import { getNewMessagesCountByRecipientId } from "../../services/messages";
 import { getFriendRequestsCountByRecipientId, friendRequestExists } from "../../services/friendRequests";
 import { getNewFriendsByUserId, friendExists } from "../../services/friendList";
@@ -13,8 +13,6 @@ import { gdObjToString } from "../../utils/gdform";
 import { modLevelToInt } from "../../utils/prismaEnums";
 
 import { Secret } from "../../helpers/enums";
-
-import { commentColors } from "../../config.json";
 
 export async function getGJUserInfoHandler(request: FastifyRequest<{ Body: getGJUserInfoInput }>, reply: FastifyReply) {
     const { targetAccountID, accountID, gjp2, secret } = request.body;
@@ -97,32 +95,4 @@ export async function getGJUserInfoHandler(request: FastifyRequest<{ Body: getGJ
     }
 
     return reply.send(gdObjToString(userInfoObj));
-}
-
-export async function requestUserAccessHandler(request: FastifyRequest<{ Body: requestUserAccessInput }>, reply: FastifyReply) {
-    const { accountID, gjp2, secret } = request.body;
-
-    if (!checkSecret(secret, Secret.Common)) {
-        return reply.send(-1)
-    }
-
-    const user = await getUserById(Number(accountID));
-
-    if (!user) {
-        return reply.send(-1);
-    }
-
-    if (!checkUserGjp2(gjp2, user.passHash)) {
-        return reply.send(-1);
-    }
-
-    if (modLevelToInt(user.modLevel)[0] == 0) {
-        await updateUserAccess(Number(accountID), false, commentColors[user.modLevel]);
-
-        return reply.send(-1);
-    }
-
-    await updateUserAccess(Number(accountID), true, commentColors[user.modLevel]);
-
-    return reply.send(modLevelToInt(user.modLevel)[1]);
 }
