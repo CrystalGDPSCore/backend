@@ -28,13 +28,15 @@ export async function getGJSongInfoHandler(request: FastifyRequest<{ Body: getGJ
         return reply.send(-2);
     }
 
-    return reply.send(gdObjToString({
+    const songInfoObj = {
         1: song.id,
         2: song.name,
         4: song.artist.name,
         5: song.size,
         10: song.link
-    }, "~|~"));
+    };
+
+    return reply.send(gdObjToString(songInfoObj, "~|~"));
 }
 
 export async function getCustomContentURLHandler(request: FastifyRequest, reply: FastifyReply) {
