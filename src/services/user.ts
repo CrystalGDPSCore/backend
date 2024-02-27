@@ -103,3 +103,26 @@ export async function updateUserSettings(
         }
     });
 }
+
+export function getShownIcon(iconType: number) {
+    switch (iconType) {
+        case 1:
+            return "Ship";
+        case 2:
+            return "Ball";
+        case 3:
+            return "Ufo";
+        case 4:
+            return "Wave";
+        case 5:
+            return "Robot";
+        case 6:
+            return "Spider";
+        case 7:
+            return "Swing";
+        case 8:
+            return "Jetpack"
+        default:
+            return "Cube";
+    }
+}

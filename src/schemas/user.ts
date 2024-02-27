@@ -20,6 +20,13 @@ export const getGJUserInfoSchema = z.object({
     secret: z.string()
 });
 
+export const getGJUsersSchema = z.object({
+    accountID: z.string(),
+    gjp2: z.string(),
+    str: z.string(),
+    secret: z.string()
+});
+
 export const requestUserAccessSchema = z.object({
     accountID: z.string(),
     gjp2: z.string(),
@@ -27,6 +34,7 @@ export const requestUserAccessSchema = z.object({
 });
 
 export type getGJUserInfoInput = z.infer<typeof getGJUserInfoSchema>;
+export type getGJUsersInput = z.infer<typeof getGJUsersSchema>;
 export type requestUserAccessInput = z.infer<typeof requestUserAccessSchema>;
 
 export const { schemas: userSchemas, $ref: $userRef } = buildJsonSchemas({
