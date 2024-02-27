@@ -10,11 +10,12 @@ export async function getSfxFileHandler(request: FastifyRequest<{ Params: { file
 
 export async function getMp3Handler(request: FastifyRequest<{ Querystring: { id: number } }>, reply: FastifyReply) {
     const songId = request.query.id;
+
     const songInfo = await getSongInfoById(Number(songId));
 
-    if (songInfo?.isDisabled) {
+    if (!songInfo || songInfo.isDisabled) {
         return reply.redirect(server.domain);
     }
 
-    return reply.redirect(String(songInfo?.link));
+    return reply.redirect(String(songInfo.link));
 }
