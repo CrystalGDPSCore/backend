@@ -11,6 +11,8 @@ import { getAudioFromNewgrounds, getAudioFromYoutube } from "../../../utils/fetc
 
 import { ErrorCode } from "../../../helpers/enums";
 
+import { timeLimits } from "../../../config.json";
+
 export async function apiGetSongInfoByIDHandler(request: FastifyRequest< { Body: songIDInput } >, reply: FastifyReply) {
     const { id } = request.body;
 
@@ -89,7 +91,7 @@ export async function apiAddSongHandler(request: FastifyRequest< { Body: apiAddS
         ]
     );
 
-    await redis.set(`${request.ip}:addedSong`, 1, "EX", 60 * 60);
+    await redis.set(`${request.ip}:addedSong`, 1, "EX", timeLimits.addedSong);
 
     return reply.send({ id: addedSongInfo.id });
 }

@@ -13,7 +13,7 @@ import { messageStateToEnum, friendStateToEnum, commentHistoryStateToEnum } from
 
 import { Secret, QueryMode } from "../../helpers/enums";
 
-import { server } from "../../config.json";
+import { server, timeLimits } from "../../config.json";
 
 export async function registerGJAccountHandler(request: FastifyRequest<{ Body: registerGJAccountInput }>, reply: FastifyReply) {
     const { userName, password, email, secret } = request.body;
@@ -52,7 +52,7 @@ export async function registerGJAccountHandler(request: FastifyRequest<{ Body: r
         );
 
         await redis.hmset(`${uuid}:activation`, { userName, password, email });
-        await redis.expire(`${uuid}:activation`, 60 * 60);
+        await redis.expire(`${uuid}:activation`, timeLimits.accountActivation);
     } else {
         await registerUser({
             userName: userName,
@@ -84,7 +84,7 @@ export async function loginGJAccountHandler(request: FastifyRequest<{ Body: logi
 
     if (!checkUserGjp2(gjp2, user.passHash)) {
         if (!loginAttempts) {
-            await redis.set(`${request.ip}:login`, 1, "EX", 60 * 60);
+            await redis.set(`${request.ip}:login`, 1, "EX", timeLimits.loginAttempts);
         } else {
             await redis.incr(`${request.ip}:login`);
         }
