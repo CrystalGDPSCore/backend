@@ -9,13 +9,13 @@
         <form action="../api/song/add" id="addSongForm">
             <label for="song">Song: </label>
             <input type="text" name="song" id="song">
-            <input type="submit" value="Send" id="sendBtn">
+            <input type="submit" value="Upload" id="uploadBtn">
         </form>
         <p id="statusText"></p>
     </body>
 
     <script>
-        $("#sendBtn").click(e => {
+        $("#uploadBtn").click(e => {
             e.preventDefault();
 
             const postUrl = $("#addSongForm").attr("action");
