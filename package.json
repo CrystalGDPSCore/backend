@@ -1,6 +1,6 @@
 {
   "name": "crystal",
-  "version": "1.0.0",
+  "version": "0.0.3",
   "description": "A perfomant core for Geometry Dash Private Servers",
   "main": "index.ts",
   "scripts": {
@@ -23,7 +23,6 @@
     "normalize-unicode-text": "^0.0.1",
     "speakingurl": "^14.0.1",
     "ytdl-core": "^4.11.5",
-    "zlib": "^1.0.5",
     "zod": "^3.22.4"
   },
   "devDependencies": {
