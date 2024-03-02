@@ -10,6 +10,7 @@ import { userSchemas } from "./schemas/user";
 
 import accountRoutes from "./routes/other/web/account";
 import customContentRoutes from "./routes/other/web/customContent";
+import songRoutes from "./routes/other/web/song";
 
 import apiSongRoutes from "./routes/other/api/song";
 
@@ -40,6 +41,7 @@ async function main() {
     fastify.register(apiSongRoutes, { prefix: "api" });
 
     fastify.register(accountRoutes, { prefix: "account" });
+    fastify.register(songRoutes, { prefix: "song" });
     fastify.register(customContentRoutes);
 
     for (const gdRoute of [gdAccountRoutes, gdCustomContentRoutes, gdUserRoutes, gdMiscRoutes]) {
@@ -50,7 +52,7 @@ async function main() {
         fastify.addSchema(schema);
     }
 
-    fastify.listen(err => {
+    fastify.listen({ port: 1337 }, err => {
         if (err) {
             fastify.log.error(err);
             process.exit(1);
