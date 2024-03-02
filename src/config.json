@@ -1,10 +1,10 @@
 {
     "database": {
-        "prefix": "database1111"
+        "prefix": "db"
     },
     "server": {
         "name": "CrystalGDPS",
-        "domain": "http://127.0.0.1:1337",
+        "domain": "",
         "onlyRealEmails": false
     },
     "commentColors": {
@@ -15,16 +15,16 @@
         "Admin": "#100ced"
     },
     "redisDb": {
-        "host": "us1-nice-hare-38268.upstash.io",
-        "password": "fbd875b570ca479bb51d37e0d455e7d2",
-        "port": 38268
+        "host": "",
+        "password": "",
+        "port": 0
     },
     "smtp": {
-        "host": "smtp.ethereal.email",
-        "port": 587,
+        "host": "",
+        "port": 0,
         "auth": {
-            "user": "silas.von@ethereal.email",
-            "pass": "UW2gkSEmtu1M8Rr2T8"
+            "user": "",
+            "pass": ""
         }
     },
     "timeLimits": {
