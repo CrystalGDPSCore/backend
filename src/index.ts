@@ -52,7 +52,7 @@ async function main() {
         fastify.addSchema(schema);
     }
 
-    fastify.listen({ port: 1337 }, err => {
+    fastify.listen(err => {
         if (err) {
             fastify.log.error(err);
             process.exit(1);
