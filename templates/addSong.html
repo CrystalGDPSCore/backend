@@ -32,11 +32,7 @@
                     }
                 })
                 .fail(data => {
-                    if (data.responseJSON.code == "FST_ERR_VALIDATION") {
-                        $("#statusText").empty().append(`Song must be a number or an URL`);
-                    } else {
-                        $("#statusText").empty().append(data.responseJSON.message);
-                    }
+                    $("#statusText").empty().append(String(data.responseJSON.message).replace(/body\//g, ""));
                 });
         });
     </script>
