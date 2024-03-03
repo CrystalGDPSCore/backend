@@ -1,3 +1,5 @@
+import path from "path";
+
 import { FastifyRequest, FastifyReply } from "fastify";
 
 import { redis } from "../../../utils/db";
@@ -30,4 +32,8 @@ export async function activateAccountHandler(request: FastifyRequest<{ Querystri
     await redis.del(`${code}:activation`);
 
     return reply.send("Account successfully activated!");
-}   
+}
+
+export async function registerAccountHandler(request: FastifyRequest, reply: FastifyReply) {
+    return reply.sendFile("registerAccount.html", path.join(__dirname, "../../../../templates"));
+}
