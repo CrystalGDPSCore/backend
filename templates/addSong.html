@@ -32,7 +32,9 @@
                     }
                 })
                 .fail(data => {
-                    $("#statusText").empty().append(String(data.responseJSON.message).replace(/body\//g, ""));
+                    const responseMessage = String(data.responseJSON.message).replace(/body\//g, "");
+
+                    $("#statusText").empty().append(`${responseMessage.charAt(0).toUpperCase()}${responseMessage.slice(1)}.`);
                 });
         });
     </script>
