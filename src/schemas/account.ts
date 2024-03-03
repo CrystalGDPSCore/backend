@@ -7,7 +7,18 @@ export const activateAccountSchema = z.object({
     code: z.string().uuid()
 });
 
+export const registerSuccessSchema = z.object({
+    message: z.string()
+});
+
+export const apiRegisterAccountSchema = z.object({
+    name: z.string().min(3).max(15),
+    password: z.string().min(6).max(20),
+    email: z.string().email().min(5).max(32)
+});
+
 export type activateAccountInput = z.infer<typeof activateAccountSchema>;
+export type apiRegisterAccountInput = z.infer<typeof apiRegisterAccountSchema>;
 
 // GD Schemas
 
@@ -41,5 +52,6 @@ export type loginGJAccountInput = z.infer<typeof loginGJAccountSchema>;
 export type updateGJAccSettingsInput = z.infer<typeof updateGJAccSettingsSchema>;
 
 export const { schemas: accountSchemas, $ref: $accountRef } = buildJsonSchemas({
-    
+    apiRegisterAccountSchema,
+    registerSuccessSchema
 }, { $id: "accountSchema" });

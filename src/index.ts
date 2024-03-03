@@ -12,6 +12,7 @@ import accountRoutes from "./routes/other/web/account";
 import customContentRoutes from "./routes/other/web/customContent";
 import songRoutes from "./routes/other/web/song";
 
+import apiAccountRoutes from "./routes/other/api/account";
 import apiSongRoutes from "./routes/other/api/song";
 
 import gdAccountRoutes from "./routes/gd/account";
@@ -37,12 +38,14 @@ async function main() {
         prefix: "/music",
         decorateReply: false
     });
-    
-    fastify.register(apiSongRoutes, { prefix: "api" });
 
     fastify.register(accountRoutes, { prefix: "account" });
     fastify.register(songRoutes, { prefix: "song" });
     fastify.register(customContentRoutes);
+
+    for (const apiRoute of [apiAccountRoutes, apiSongRoutes]) {
+        fastify.register(apiRoute, { prefix: "api" });
+    }
 
     for (const gdRoute of [gdAccountRoutes, gdCustomContentRoutes, gdUserRoutes, gdMiscRoutes]) {
         fastify.register(gdRoute, { prefix: database.prefix });

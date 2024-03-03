@@ -23,7 +23,8 @@ export enum ErrorCode {
     SongNotFound = "SONG_NOT_FOUND",
     SongAlreadyUploaded = "SONG_ALREADY_UPLOADED",
     IncorrectLink = "INCORRECT_LINK",
-    AddedSongTimeLimit = "ADDED_SONG_TIME_LIMIT"
+    AddedSongTimeLimit = "ADDED_SONG_TIME_LIMIT",
+    UserAlreadyRegistered = "USER_ALREADY_REGISTERED"
 }
 
 export enum QueryMode {
