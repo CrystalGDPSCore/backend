@@ -35,6 +35,13 @@ export const loginGJAccountSchema = z.object({
     secret: z.string()
 });
 
+export const backupGJAccountNewSchema = z.object({
+    accountID: z.string(),
+    gjp2: z.string(),
+    saveData: z.string(),
+    secret: z.string()
+});
+
 export const updateGJAccSettingsSchema = z.object({
     accountID: z.string(),
     gjp2: z.string(),
@@ -49,6 +56,7 @@ export const updateGJAccSettingsSchema = z.object({
 
 export type registerGJAccountInput = z.infer<typeof registerGJAccountSchema>;
 export type loginGJAccountInput = z.infer<typeof loginGJAccountSchema>;
+export type backupGJAccountNewInput = z.infer<typeof backupGJAccountNewSchema>;
 export type updateGJAccSettingsInput = z.infer<typeof updateGJAccSettingsSchema>;
 
 export const { schemas: accountSchemas, $ref: $accountRef } = buildJsonSchemas({

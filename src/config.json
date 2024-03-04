@@ -29,6 +29,7 @@
     },
     "timeLimits": {
         "accountActivation": 3600,
+        "accountBackup": 30,
         "loginAttempts": 3600,
         "addedSong": 300
     }
