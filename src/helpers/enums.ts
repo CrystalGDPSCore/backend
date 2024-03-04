@@ -24,7 +24,8 @@ export enum ErrorCode {
     SongAlreadyUploaded = "SONG_ALREADY_UPLOADED",
     IncorrectLink = "INCORRECT_LINK",
     AddedSongTimeLimit = "ADDED_SONG_TIME_LIMIT",
-    UserAlreadyRegistered = "USER_ALREADY_REGISTERED"
+    UserAlreadyRegistered = "USER_ALREADY_REGISTERED",
+    UserNameIsNaN = "USERNAME_IS_NAN"
 }
 
 export enum QueryMode {

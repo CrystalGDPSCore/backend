@@ -34,6 +34,10 @@ export async function registerGJAccountHandler(request: FastifyRequest<{ Body: r
         return reply.send(-6);
     }
 
+    if (!Number.isNaN(Number(userName))) {
+        return reply.send(-1);
+    }
+
     if (await getUserByUserName(userName, QueryMode.Insensitive)) {
         return reply.send(-2);
     }

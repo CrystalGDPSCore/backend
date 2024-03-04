@@ -16,10 +16,17 @@ import { server, timeLimits } from "../../../config.json";
 export async function apiRegisterAccountHandler(request: FastifyRequest<{ Body: apiRegisterAccountInput }>, reply: FastifyReply) {
     const { name, password, email } = request.body;
 
+    if (!Number.isNaN(Number(name))) {
+        return reply.code(400).send({
+            code: ErrorCode.UserNameIsNaN,
+            message: "Name must not be a number"
+        });
+    }
+
     if (await getUserByUserName(name, QueryMode.Insensitive)) {
         return reply.code(500).send({
             code: ErrorCode.UserAlreadyRegistered,
-            message: "That userName is already registered"
+            message: "That name is already registered"
         });
     }
 
