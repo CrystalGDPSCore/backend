@@ -5,7 +5,13 @@ import { FastifyRequest, FastifyReply } from "fastify";
 
 import { redis } from "../../utils/db";
 
-import { registerGJAccountInput, loginGJAccountInput, backupGJAccountNewInput, updateGJAccSettingsInput } from "../../schemas/account";
+import {
+    registerGJAccountInput,
+    loginGJAccountInput,
+    backupGJAccountNewInput,
+    syncGJAccountNewInput,
+    updateGJAccSettingsInput
+} from "../../schemas/account";
 
 import { getUserByUserName, getUserByEmail, registerUser, updateUserSettings, getUserById } from "../../services/user";
 
@@ -173,6 +179,40 @@ export async function backupGJAccountNewHandler(request: FastifyRequest<{ Body: 
     await redis.set(`${accountID}:backup`, 1, "EX", timeLimits.accountBackup);
 
     return reply.send(1);
+}
+
+export async function syncGJAccountNewHandler(request: FastifyRequest<{ Body: syncGJAccountNewInput }>, reply: FastifyReply) {
+    const { accountID, gjp2, secret } = request.body;
+
+    const isAccountSynced = Boolean(await redis.exists(`${accountID}:sync`));
+
+    if (!checkSecret(secret, Secret.User)) {
+        return reply.send(-1);
+    }
+
+    if (isAccountSynced) {
+        return reply.send(-1);
+    }
+
+    const user = await getUserById(Number(accountID));
+
+    if (!user) {
+        return reply.send(-1);
+    }
+
+    if (!checkUserGjp2(gjp2, user.passHash)) {
+        return reply.send(-1);
+    }
+
+    try {
+        const saveData = readFileSync(path.join(__dirname, "../../../", "data", "account", `${accountID}.acc`), "utf-8");
+
+        await redis.set(`${accountID}:sync`, 1, "EX", timeLimits.accountSync);
+
+        return reply.send(`${saveData};22;40;a;a`);
+    } catch {
+        return reply.send(-1);
+    }
 }
 
 export async function getAccountUrlHandler(request: FastifyRequest, reply: FastifyReply) {
