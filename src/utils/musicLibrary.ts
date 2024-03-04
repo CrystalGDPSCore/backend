@@ -1,9 +1,10 @@
-import fs from "fs";
+import path from "path";
+import { writeFileSync, readFileSync } from "fs";
 
 import fflate from "fflate";
 
 function getInfoFromMusicLibrary() {
-    const info = fs.readFileSync("data/music/musiclibrary.dat", "utf-8");
+    const info = readFileSync(path.join(__dirname, "../../", "data", "music", "musiclibrary.dat"), "utf-8");
     const decompress = fflate.unzlibSync(Buffer.from(info, "base64url"));
 
     return fflate.strFromU8(decompress);
@@ -34,10 +35,8 @@ export default function addDataToMusicLibrary(song: (string | number)[], artist:
     const newInfo = `${version + 1}|${artists.join(";")}|${songs.join(";")}|${tags}`;
     const compressedData = fflate.zlibSync(fflate.strToU8(newInfo));
 
-    fs.writeFileSync("data/music/musiclibrary.dat", Buffer.from(compressedData).toString("base64").replace(/\//g, "_").replace(/\+/g, "-"));
-    fs.writeFileSync("data/music/musiclibrary_version.txt", String(version + 1));
-
-    return true;
+    writeFileSync(path.join(__dirname, "../../", "data", "music", "musiclibrary.dat"), Buffer.from(compressedData).toString("base64").replace(/\//g, "_").replace(/\+/g, "-"));
+    writeFileSync(path.join(__dirname, "../../", "data", "music", "musiclibrary_version.txt"), String(version + 1));
 }
 
 // eJwzrKmpMdSJzC8NKU1KtTbS8UstTy_KL81LKQYAfOYJlQ==

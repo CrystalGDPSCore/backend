@@ -1,3 +1,4 @@
+import path from "path";
 import { statSync } from "fs";
 
 import * as cheerio from "cheerio";
@@ -48,7 +49,7 @@ export async function getAudioFromYoutube(video: string) {
     const audioStream = ytdl.downloadFromInfo(videoInfo, { quality: "140" });
 
     await convertToMp3(audioStream, videoInfo.videoDetails.videoId);
-    const audioSize = (statSync(`data/songs/${videoInfo.videoDetails.videoId}.mp3`).size / (1024 * 1024)).toFixed(2);
+    const audioSize = (statSync(path.join(__dirname, "../../", "data", "songs", `${videoInfo.videoDetails.videoId}.mp3`)).size / (1024 * 1024)).toFixed(2);
 
     const song = {
         name: title,
