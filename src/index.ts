@@ -17,7 +17,6 @@ import apiSongRoutes from "./routes/other/api/song";
 
 import gdAccountRoutes from "./routes/gd/account";
 import gdCustomContentRoutes from "./routes/gd/customContent";
-import gdMiscRoutes from "./routes/gd/misc";
 import gdUserRoutes from "./routes/gd/user";
 
 import { database } from "./config.json";
@@ -47,7 +46,7 @@ async function main() {
         fastify.register(apiRoute, { prefix: "api" });
     }
 
-    for (const gdRoute of [gdAccountRoutes, gdCustomContentRoutes, gdUserRoutes, gdMiscRoutes]) {
+    for (const gdRoute of [gdAccountRoutes, gdCustomContentRoutes, gdUserRoutes]) {
         fastify.register(gdRoute, { prefix: database.prefix });
     }
 

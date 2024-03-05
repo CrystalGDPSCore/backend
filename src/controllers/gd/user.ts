@@ -1,8 +1,8 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 
-import { getGJUserInfoInput, getGJUsersInput } from "../../schemas/user";
+import { getGJUserInfoInput, getGJUsersInput, requestUserAccessInput } from "../../schemas/user";
 
-import { getUserById, getUserByUserName, getShownIcon } from "../../services/user";
+import { getUserById, getUserByUserName, updateUserAccess, getShownIcon } from "../../services/user";
 import { getNewMessagesCountByRecipientId } from "../../services/messages";
 import { getFriendRequestsCountByRecipientId, friendRequestExists } from "../../services/friendRequests";
 import { getNewFriendsCountByUserId, friendExists } from "../../services/friendList";
@@ -13,6 +13,8 @@ import { gdObjToString } from "../../utils/gdform";
 import { modLevelToInt } from "../../utils/prismaEnums";
 
 import { QueryMode, Secret } from "../../helpers/enums";
+
+import { commentColors } from "../../config.json";
 
 export async function getGJUserInfoHandler(request: FastifyRequest<{ Body: getGJUserInfoInput }>, reply: FastifyReply) {
     const { targetAccountID, accountID, gjp2, secret } = request.body;
@@ -155,4 +157,32 @@ export async function getGJUsersHandler(request: FastifyRequest<{ Body: getGJUse
     };
 
     return reply.send(`${gdObjToString(userInfoObj)}#1:0:10`);
+}
+
+export async function requestUserAccessHandler(request: FastifyRequest<{ Body: requestUserAccessInput }>, reply: FastifyReply) {
+    const { accountID, gjp2, secret } = request.body;
+
+    if (!checkSecret(secret, Secret.Common)) {
+        return reply.send(-1)
+    }
+
+    const user = await getUserById(Number(accountID));
+
+    if (!user) {
+        return reply.send(-1);
+    }
+
+    if (!checkUserGjp2(gjp2, user.passHash)) {
+        return reply.send(-1);
+    }
+
+    if (modLevelToInt(user.modLevel)[0] == 0) {
+        await updateUserAccess(Number(accountID), false, commentColors[user.modLevel]);
+
+        return reply.send(-1);
+    }
+
+    await updateUserAccess(Number(accountID), true, commentColors[user.modLevel]);
+
+    return reply.send(modLevelToInt(user.modLevel)[1]);
 }
