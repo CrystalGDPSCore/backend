@@ -51,7 +51,7 @@ model UserStats {
   iconSpider     Int     @default(1)
   iconSwing      Int     @default(1)
   iconJetpack    Int     @default(1)
-  iconExplosion  Int     @default(0)
+  iconExplosion  Int     @default(1)
   primaryColor   Int     @default(0)
   secondaryColor Int     @default(3)
   glowColor      Int     @default(-1)
