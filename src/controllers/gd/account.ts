@@ -132,15 +132,14 @@ export async function updateGJAccSettingsHandler(request: FastifyRequest<{ Body:
         return reply.send(-1);
     }
 
-    await updateUserSettings(
-        Number(accountID),
-        messageStateToEnum(Number(mS)),
-        friendStateToEnum(Number(frS)),
-        commentHistoryStateToEnum(Number(cS)),
-        yt,
-        twitter,
-        twitch
-    )
+    await updateUserSettings(Number(accountID), {
+        messageState: messageStateToEnum(Number(mS)),
+        friendState: friendStateToEnum(Number(frS)),
+        commentHistoryState: commentHistoryStateToEnum(Number(cS)),
+        youtube: yt,
+        twitter: twitter,
+        twitch: twitch
+    });
 
     return reply.send(1);
 }

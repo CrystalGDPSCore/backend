@@ -1,8 +1,7 @@
-import { MessageState, FriendState, CommentHistoryState } from "@prisma/client";
-
 import { db } from "../utils/db";
 
-import { registerUserInput } from "../schemas/user";
+import { registerUserInput, updateUserAccessInput, updateUserSettingsInput } from "../schemas/user";
+import { updateUserScoreInput } from "../schemas/score";
 
 import { QueryMode } from "../helpers/enums";
 
@@ -67,40 +66,31 @@ export async function registerUser(input: registerUserInput) {
     return user.id;
 }
 
-export async function updateUserAccess(userId: number, modRequested: boolean, commentColor: string) {
+export async function updateUserAccess(userId: number, input: updateUserAccessInput) {
     await db.users.update({
         where: {
             id: userId
         },
-        data: {
-            modRequested,
-            commentColor
-        }
+        data: input
     });
 }
 
 
-export async function updateUserSettings(
-    userId: number, 
-    messageState: MessageState, 
-    friendState: FriendState, 
-    commentHistoryState: CommentHistoryState,
-    youtube: string,
-    twitter: string,
-    twitch: string
-) {
+export async function updateUserSettings(userId: number, input: updateUserSettingsInput) {
     await db.users.update({
         where: {
             id: userId
         },
-        data: {
-            messageState,
-            friendState,
-            commentHistoryState,
-            youtube,
-            twitter,
-            twitch
-        }
+        data: input
+    });
+}
+
+export async function updateUserScore(userId: number, input: updateUserScoreInput) {
+    await db.userStats.update({
+        where: {
+            userId
+        },
+        data: input
     });
 }
 

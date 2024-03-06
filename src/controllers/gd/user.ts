@@ -177,12 +177,18 @@ export async function requestUserAccessHandler(request: FastifyRequest<{ Body: r
     }
 
     if (modLevelToInt(user.modLevel)[0] == 0) {
-        await updateUserAccess(Number(accountID), false, commentColors[user.modLevel]);
+        await updateUserAccess(Number(accountID), {
+            modRequested: false,
+            commentColor: commentColors[user.modLevel]
+        });
 
         return reply.send(-1);
     }
 
-    await updateUserAccess(Number(accountID), true, commentColors[user.modLevel]);
+    await updateUserAccess(Number(accountID), {
+        modRequested: true,
+        commentColor: commentColors[user.modLevel]
+    });
 
     return reply.send(modLevelToInt(user.modLevel)[1]);
 }

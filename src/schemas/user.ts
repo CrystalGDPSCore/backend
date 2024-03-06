@@ -9,7 +9,23 @@ export const registerUserSchema = z.object({
     email: z.string().email()
 });
 
+export const updateUserAccessSchema = z.object({
+    modRequested: z.boolean(),
+    commentColor: z.string()
+});
+
+export const updateUserSettingsSchema = z.object({
+    messageState: z.enum(["All", "Friends", "None"]), 
+    friendState: z.enum(["All", "None"]), 
+    commentHistoryState: z.enum(["All", "Friends", "None"]),
+    youtube: z.string(),
+    twitter: z.string(),
+    twitch: z.string()
+});
+
 export type registerUserInput = z.infer<typeof registerUserSchema>;
+export type updateUserAccessInput = z.infer<typeof updateUserAccessSchema>;
+export type updateUserSettingsInput = z.infer<typeof updateUserSettingsSchema>;
 
 // GD Schemas
 

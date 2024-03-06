@@ -7,6 +7,8 @@ import fastifyFormbody from "@fastify/formbody";
 import { songSchemas } from "./schemas/song";
 import { accountSchemas } from "./schemas/account";
 import { userSchemas } from "./schemas/user";
+import { customContentSchemas } from "./schemas/customContent";
+import { scoreSchemas } from "./schemas/score";
 
 import accountRoutes from "./routes/other/web/account";
 import customContentRoutes from "./routes/other/web/customContent";
@@ -17,6 +19,7 @@ import apiSongRoutes from "./routes/other/api/song";
 
 import gdAccountRoutes from "./routes/gd/account";
 import gdCustomContentRoutes from "./routes/gd/customContent";
+import gdScoreRoutes from "./routes/gd/score";
 import gdUserRoutes from "./routes/gd/user";
 
 import { database } from "./config.json";
@@ -46,11 +49,11 @@ async function main() {
         fastify.register(apiRoute, { prefix: "api" });
     }
 
-    for (const gdRoute of [gdAccountRoutes, gdCustomContentRoutes, gdUserRoutes]) {
+    for (const gdRoute of [gdAccountRoutes, gdCustomContentRoutes, gdScoreRoutes, gdUserRoutes]) {
         fastify.register(gdRoute, { prefix: database.prefix });
     }
 
-    for (const schema of [...songSchemas, ...accountSchemas, ...userSchemas]) {
+    for (const schema of [...songSchemas, ...accountSchemas, ...userSchemas, ...customContentSchemas, ...scoreSchemas]) {
         fastify.addSchema(schema);
     }
 
