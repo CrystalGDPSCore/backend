@@ -46,6 +46,17 @@ export function commentHistoryStateToInt(commentHistoryState: $Enums.CommentHist
     }
 }
 
+export function questTypeToInt(questType: $Enums.QuestType) {
+    switch (questType) {
+        case $Enums.QuestType.Orbs:
+            return 1;
+        case $Enums.QuestType.Coins:
+            return 2;
+        case $Enums.QuestType.Stars:
+            return 3;
+    }
+}
+
 export function messageStateToEnum(messageState: number) {
     switch (messageState) {
         case 1:
@@ -74,5 +85,16 @@ export function commentHistoryStateToEnum(commentHistoryState: number) {
             return $Enums.CommentHistoryState.None;
         default:
             return $Enums.CommentHistoryState.All
+    }
+}
+
+export function questTypeToEnum(questType: number) {
+    switch (questType) {
+        case 2:
+            return $Enums.QuestType.Coins;
+        case 3:
+            return $Enums.QuestType.Stars;
+        default:
+            return $Enums.QuestType.Orbs;
     }
 }

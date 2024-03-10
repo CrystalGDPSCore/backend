@@ -1,6 +1,8 @@
 import { Buffer } from "buffer";
+
 import * as crypto from "crypto";
 import * as bcrypt from "bcrypt";
+import * as itertools from "itertools";
 
 import { Salts } from "../helpers/enums";
 
@@ -8,16 +10,34 @@ export function generateUuid() {
     return crypto.randomUUID();
 }
 
+export function xor(str: string, key: number) {
+    let result = "";
+    
+    for (const [strChar, keyChar] of itertools.zip(str, itertools.cycle(String(key)))) {
+        result += String.fromCharCode(strChar.charCodeAt(0) ^ keyChar.charCodeAt(0));
+    }
+
+    return result;
+}
+
 export function base64Encode(str: string) {
     return Buffer.from(str).toString("base64");
 }
 
 export function base64Decode(str: string) {
-    return Buffer.from(str).toString("ascii");
+    return Buffer.from(str, "base64").toString();
+}
+
+export function safeBase64Encode(str: string) {
+    return base64Encode(str).replace(/\+/g, "-").replace(/\//g, "_");
+}
+
+export function safeBase64Decode(str: string) {
+    return base64Decode(str.replace(/\-/g, "+").replace(/\_/g, "/"));
 }
 
 export function hashGdObj(str: string, salt: Salts) {
-    const hash = crypto.createHash("sha1").update(`${str}${salt}`, "utf-8").digest("hex");
+    const hash = crypto.createHash("sha1").update(`${str}${salt}`).digest("hex");
     
     return hash;
 }

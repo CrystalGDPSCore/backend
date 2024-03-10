@@ -19,6 +19,7 @@
     "fflate": "^0.8.2",
     "fluent-ffmpeg": "^2.1.2",
     "ioredis": "^5.3.2",
+    "itertools": "^2.2.5",
     "nodemailer": "^6.9.9",
     "normalize-unicode-text": "^0.0.1",
     "speakingurl": "^14.0.1",

@@ -136,6 +136,20 @@ model Songs {
   artist     Artists  @relation(fields: [artistId], references: [id])
 }
 
+model Quests {
+  id     Int       @id @default(autoincrement())
+  type   QuestType
+  amount Int
+  reward Int
+  name   String
+}
+
+enum QuestType {
+  Orbs
+  Coins
+  Stars
+}
+
 enum ModLevel {
   None
   Mod

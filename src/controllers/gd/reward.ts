@@ -1,0 +1,73 @@
+import { FastifyRequest, FastifyReply } from "fastify";
+
+import { getGJChallengesInput } from "../../schemas/reward";
+
+import { getUserById } from "../../services/user";
+import { getRandomQuests } from "../../services/quests";
+
+import { questTypeToInt } from "../../utils/prismaEnums";
+import { checkSecret } from "../../utils/checks";
+import { xor, safeBase64Encode, base64Decode, hashGdObj, checkUserGjp2 } from "../../utils/crypt";
+
+import { Salts, Secret } from "../../helpers/enums";
+
+export async function getGJChallengesHandler(request: FastifyRequest<{ Body: getGJChallengesInput }>, reply: FastifyReply) {
+    const { accountID, gjp2, udid, chk, secret } = request.body;
+
+    const startTime = new Date("2024-03-01T00:00:00.000Z").getTime();
+
+    if (!checkSecret(secret, Secret.Common)) {
+        return reply.send(-1);
+    }
+
+    if (!accountID || !gjp2) {
+        return reply.send(-1);
+    }
+
+    const user = await getUserById(Number(accountID));
+
+    if (!user) {
+        return reply.send(-1);
+    }
+
+    if (!checkUserGjp2(gjp2, user.passHash)) {
+        return reply.send(-1);
+    }
+
+    const randomQuests = await getRandomQuests();
+
+    if (!randomQuests[0] || !randomQuests[1] || !randomQuests[2]) {
+        return reply.send(-1);
+    }
+
+    const quests: string[] = [];
+
+    randomQuests.forEach((quest, index) => {
+        quests.push(
+            [
+                Date.now() - startTime + index,
+                questTypeToInt(quest.type),
+                quest.amount,
+                quest.reward,
+                quest.name
+            ].join(",")
+        );
+    });
+
+    const result = safeBase64Encode(
+        xor(
+            [
+                "Crystal",
+                user.id,
+                xor(base64Decode(chk.slice(5)), 19847),
+                udid,
+                user.id,
+                Math.round((new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60000 - Date.now()) / 1000),
+                ...quests
+            ].join(":"),
+            19847
+        )
+    );
+
+    return reply.send(`CRsTl${result}|${hashGdObj(result, Salts.Challenge)}`);
+}
