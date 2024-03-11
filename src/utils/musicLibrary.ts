@@ -32,7 +32,13 @@ export default function addDataToMusicLibrary(song: (string | number)[], artist:
         songs.push(song.join(","));
     }
 
-    const newInfo = `${version + 1}|${artists.join(";")}|${songs.join(";")}|${tags}`;
+    const newInfo = [
+        version + 1,
+        artists.join(";"),
+        songs.join(";"),
+        tags
+    ].join("|");
+
     const compressedData = fflate.zlibSync(fflate.strToU8(newInfo));
 
     writeFileSync(path.join(__dirname, "../../", "data", "music", "musiclibrary.dat"), Buffer.from(compressedData).toString("base64").replace(/\//g, "_").replace(/\+/g, "-"));
