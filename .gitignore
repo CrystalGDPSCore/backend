@@ -1,0 +1,7 @@
+.env
+
+node_modules
+ffmpeg
+
+data/account/*.acc
+data/songs/*.mp3
