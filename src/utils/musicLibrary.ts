@@ -3,34 +3,34 @@ import { writeFileSync, readFileSync } from "fs";
 
 import fflate from "fflate";
 
-function getInfoFromMusicLibrary() {
+import { songInfoObj, artistInfoObj } from "../schemas/util/musicLibrary";
+
+export function getDataFromMusicLibrary() {
     const info = readFileSync(path.join(__dirname, "../../", "data", "music", "musiclibrary.dat"), "utf-8");
     const decompress = fflate.unzlibSync(Buffer.from(info, "base64url"));
 
     return fflate.strFromU8(decompress);
 }
 
-export default function addDataToMusicLibrary(song: (string | number)[], artist: (string | number)[]) {
-    const info = getInfoFromMusicLibrary().split("|");
+export function addDataToMusicLibrary(song: songInfoObj, artist: artistInfoObj) {
+    const info = getDataFromMusicLibrary().split("|");
 
     const version = Number(info[0]);
     const artists = info[1].split(";");
     const songs = info[2].split(";");
     const tags = info[3];
 
-    if (!artists.includes(artist.join(","))) {
-        if (!artists[0]) {
-            artists[0] = artist.join(",");
-        } else {
-            artists.push(artist.join(","));
-        }
+    const songData = Object.values(song);
+    songData[5] = `.${songData[5]}.`;
+
+    const artistData = Object.values(artist);
+    artistData.push(" ", " ");
+
+    if (!artists.includes(artistData.join(","))) {
+        artists[0] ? artists.push(artistData.join(",")) : artists[0] = artistData.join(",");
     }
 
-    if (!songs[0]) {
-        songs[0] = song.join(",");
-    } else {
-        songs.push(song.join(","));
-    }
+    songs[0] ? songs.push(songData.join(",")) : songs[0] = songData.join(",");
 
     const newInfo = [
         version + 1,

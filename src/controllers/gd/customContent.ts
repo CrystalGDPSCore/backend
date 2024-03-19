@@ -1,24 +1,17 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 
-import { getGJSongInfoInput } from "../../schemas/song";
+import { GetGJSongInfoInput } from "../../schemas/gd/customContent";
 
-import { getSongInfoById } from "../../services/songs";
+import { getSongById } from "../../services/song";
 
-import { gdObjToString } from "../../utils/gdform";
-import { checkSecret } from "../../utils/checks";
-
-import { Secret } from "../../helpers/enums";
+import { gdObjToString } from "../../utils/gd";
 
 import { server } from "../../config.json";
 
-export async function getGJSongInfoHandler(request: FastifyRequest<{ Body: getGJSongInfoInput }>, reply: FastifyReply) {
-    const { songID, secret } = request.body;
+export async function getGJSongInfoController(request: FastifyRequest<{ Body: GetGJSongInfoInput }>, reply: FastifyReply) {
+    const { songID } = request.body;
 
-    if (!checkSecret(secret, Secret.Common)) {
-        return reply.send(-1);
-    }
-
-    const song = await getSongInfoById(Number(songID));
+    const song = await getSongById(songID);
 
     if (!song) {
         return reply.send(-1);
@@ -39,6 +32,6 @@ export async function getGJSongInfoHandler(request: FastifyRequest<{ Body: getGJ
     return reply.send(gdObjToString(songInfoObj, "~|~"));
 }
 
-export async function getCustomContentURLHandler(request: FastifyRequest, reply: FastifyReply) {
+export async function getCustomContentURLController(request: FastifyRequest, reply: FastifyReply) {
     return reply.send(server.domain);
 }

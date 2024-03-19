@@ -8,7 +8,7 @@ export enum Secret {
 
 export enum Salts {
     Level = "xI25fpAapCQg",
-    Challenge = "oC36fpYaPtdg", // Quest
+    Challenge = "oC36fpYaPtdg",
     Reward = "pC26fpYaQCtg",
     RegisterUser = "mI29fmAnxgTs"
 }
@@ -19,16 +19,14 @@ export enum LikeType {
     UserComment = 3
 }
 
-export enum ErrorCode {
-    SongNotFound = "SONG_NOT_FOUND",
-    SongAlreadyUploaded = "SONG_ALREADY_UPLOADED",
-    IncorrectLink = "INCORRECT_LINK",
-    AddedSongTimeLimit = "ADDED_SONG_TIME_LIMIT",
-    UserAlreadyRegistered = "USER_ALREADY_REGISTERED",
-    UserNameIsNaN = "USERNAME_IS_NAN"
-}
-
 export enum QueryMode {
     Default = "default",
     Insensitive = "insensitive"
+}
+
+export enum SongError {
+    SongNotFound = "SONG_NOT_FOUND",
+    SongAlreadyUploaded = "SONG_ALREADY_UPLOADED",
+    SongIncorrectLink = "SONG_INCORRECT_LINK",
+    SongAddedTimeLimit = "SONG_ADDED_TIME_LIMIT"
 }

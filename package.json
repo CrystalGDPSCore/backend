@@ -1,6 +1,6 @@
 {
   "name": "crystal",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "A perfomant core for Geometry Dash Private Servers",
   "main": "index.ts",
   "scripts": {
@@ -14,8 +14,9 @@
     "@prisma/client": "^5.7.1",
     "bcrypt": "^5.1.1",
     "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^16.4.5",
     "fastify": "^4.25.2",
-    "fastify-zod": "^1.4.0",
+    "fastify-type-provider-zod": "^1.1.9",
     "fflate": "^0.8.2",
     "fluent-ffmpeg": "^2.1.2",
     "ioredis": "^5.3.2",

@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
+model User {
   id                  Int                 @id @default(autoincrement())
   userName            String              @unique
   passHash            String
@@ -24,11 +24,11 @@ model Users {
   isDisabled          Boolean             @default(false)
   registerDate        DateTime            @default(now())
   blockList           BlockList[]
-  comments            Comments[]
+  comments            Comment[]
   friendList          FriendList[]
-  friendRequests      FriendRequests[]
-  messages            Messages[]
-  userComments        UserComments[]
+  friendRequests      FriendRequest[]
+  messages            Message[]
+  userComments        UserComment[]
   stats               UserStats?
 }
 
@@ -56,20 +56,20 @@ model UserStats {
   secondaryColor Int     @default(3)
   glowColor      Int     @default(-1)
   hasGlow        Boolean @default(false)
-  user           Users   @relation(fields: [userId], references: [id])
+  user           User    @relation(fields: [userId], references: [id])
 }
 
-model UserComments {
+model UserComment {
   id         Int      @id @default(autoincrement())
   userId     Int
   comment    String
   likes      Int      @default(0)
   isSpam     Boolean  @default(false)
   postedDate DateTime @default(now())
-  user       Users    @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
 }
 
-model Comments {
+model Comment {
   id          Int      @id @default(autoincrement())
   userId      Int
   itemId      Int
@@ -79,10 +79,10 @@ model Comments {
   isSpam      Boolean  @default(false)
   isLevelList Boolean  @default(false)
   postedDate  DateTime @default(now())
-  user        Users    @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
 }
 
-model Messages {
+model Message {
   id          Int      @id @default(autoincrement())
   userId      Int
   recipientId Int
@@ -90,7 +90,7 @@ model Messages {
   body        String
   isNew       Boolean  @default(true)
   postedDate  DateTime @default(now())
-  user        Users    @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 model FriendList {
@@ -98,33 +98,33 @@ model FriendList {
   userId   Int
   friendId Int
   isNew    Boolean @default(true)
-  user     Users   @relation(fields: [userId], references: [id])
+  user     User    @relation(fields: [userId], references: [id])
 }
 
-model FriendRequests {
+model FriendRequest {
   id          Int      @id @default(autoincrement())
   userId      Int
   recipientId Int
   comment     String
   postedDate  DateTime @default(now())
-  user        Users    @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 model BlockList {
-  id            Int   @id @default(autoincrement())
+  id            Int  @id @default(autoincrement())
   userId        Int
   blockedUserId Int
-  user          Users @relation(fields: [userId], references: [id])
+  user          User @relation(fields: [userId], references: [id])
 }
 
-model Artists {
-  id       Int     @id @default(autoincrement())
+model Artist {
+  id       Int    @id @default(autoincrement())
   name     String
-  resource String  @unique
-  songs    Songs[]
+  resource String @unique
+  songs    Song[]
 }
 
-model Songs {
+model Song {
   id         Int      @id @default(autoincrement())
   artistId   Int
   name       String
@@ -133,10 +133,10 @@ model Songs {
   link       String   @unique
   isDisabled Boolean  @default(false)
   uploadTime DateTime @default(now())
-  artist     Artists  @relation(fields: [artistId], references: [id])
+  artist     Artist   @relation(fields: [artistId], references: [id])
 }
 
-model Quests {
+model Quest {
   id     Int       @id @default(autoincrement())
   type   QuestType
   amount Int

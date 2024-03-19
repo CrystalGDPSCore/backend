@@ -1,21 +1,14 @@
+import "dotenv/config";
+
 import path from "path";
 
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
 import fastifyFormbody from "@fastify/formbody";
 
-import { songSchemas } from "./schemas/song";
-import { accountSchemas } from "./schemas/account";
-import { userSchemas } from "./schemas/user";
-import { customContentSchemas } from "./schemas/customContent";
-import { scoreSchemas } from "./schemas/score";
+import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 
-import accountRoutes from "./routes/other/web/account";
-import customContentRoutes from "./routes/other/web/customContent";
-import songRoutes from "./routes/other/web/song";
-
-import apiAccountRoutes from "./routes/other/api/account";
-import apiSongRoutes from "./routes/other/api/song";
+import apiCustomContentRoutes from "./routes/api/customContent";
 
 import gdAccountRoutes from "./routes/gd/account";
 import gdCustomContentRoutes from "./routes/gd/customContent";
@@ -23,13 +16,16 @@ import gdRewardRoutes from "./routes/gd/reward";
 import gdScoreRoutes from "./routes/gd/score";
 import gdUserRoutes from "./routes/gd/user";
 
-import { database } from "./config.json";
+import customContentRoutes from "./routes/other/customContent";
 
-const fastify = Fastify({
-    logger: true
-});
+import { database, server } from "./config.json";
+
+const fastify = Fastify({ logger: true });
 
 async function main() {
+    fastify.setValidatorCompiler(validatorCompiler);
+    fastify.setSerializerCompiler(serializerCompiler);
+
     fastify.register(fastifyFormbody);
 
     fastify.register(fastifyStatic, {
@@ -42,23 +38,17 @@ async function main() {
         decorateReply: false
     });
 
-    fastify.register(accountRoutes, { prefix: "account" });
-    fastify.register(songRoutes, { prefix: "song" });
-    fastify.register(customContentRoutes);
-
-    for (const apiRoute of [apiAccountRoutes, apiSongRoutes]) {
+    for (const apiRoute of [apiCustomContentRoutes]) {
         fastify.register(apiRoute, { prefix: "api" });
     }
 
     for (const gdRoute of [gdAccountRoutes, gdCustomContentRoutes, gdRewardRoutes, gdScoreRoutes, gdUserRoutes]) {
-        fastify.register(gdRoute, { prefix: database.prefix });
+        fastify.register(gdRoute, { prefix: database.path });
     }
 
-    for (const schema of [...songSchemas, ...accountSchemas, ...userSchemas, ...customContentSchemas, ...scoreSchemas]) {
-        fastify.addSchema(schema);
-    }
+    fastify.register(customContentRoutes);
 
-    fastify.listen(err => {
+    fastify.listen({ port: server.port }, err => {
         if (err) {
             fastify.log.error(err);
             process.exit(1);

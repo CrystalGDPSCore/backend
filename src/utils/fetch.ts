@@ -25,18 +25,20 @@ export async function getAudioFromNewgrounds(songId: number) {
     songLink = songLink.replace(/\\/g, "");
 
     let songSize = (await fetch(songLink, { method: "HEAD" })).headers.get("content-length");
-    songSize = (Number(songSize) / (1024 * 1024)).toFixed(2);
+    songSize = (parseInt(songSize as string) / (1024 * 1024)).toFixed(2);
 
-    const song = {
+    const songObj = {
         name: songName,
-        size: Number(songSize),
+        size: parseInt(songSize),
         resource: `ng:${songId}`,
         link: songLink,
-        artistName: artist,
-        artistResource: `ng:${artist.toLowerCase()}`
+        artist: {
+            name: artist,
+            resource: `ng:${artist.toLowerCase()}`
+        }
     };
 
-    return song;
+    return songObj;
 }
 
 export async function getAudioFromYoutube(video: string) {
@@ -44,21 +46,23 @@ export async function getAudioFromYoutube(video: string) {
 
     const title = transliterate(videoInfo.videoDetails.title);
     const artist = transliterate(videoInfo.videoDetails.author.name);
-    const artistTag = videoInfo.videoDetails.author.user;
+    const artistTag = String(videoInfo.videoDetails.author.user);
 
     const audioStream = ytdl.downloadFromInfo(videoInfo, { quality: "140" });
 
     await convertToMp3(audioStream, videoInfo.videoDetails.videoId);
     const audioSize = (statSync(path.join(__dirname, "../../", "data", "songs", `${videoInfo.videoDetails.videoId}.mp3`)).size / (1024 * 1024)).toFixed(2);
 
-    const song = {
+    const songObj = {
         name: title,
-        size: Number(audioSize),
+        size: parseInt(audioSize),
         resource: `yt:${videoInfo.videoDetails.videoId}`,
         link: `${server.domain}/songs/${videoInfo.videoDetails.videoId}.mp3`,
-        artistName: artist,
-        artistResource: `yt:${artistTag?.substring(1)}`
+        artist: {
+            name: artist,
+            resource: artistTag[0] == "@" ? `yt:${artistTag.slice(1)}` : `yt:${artistTag}`
+        }
     };
 
-    return song;
+    return songObj;
 }

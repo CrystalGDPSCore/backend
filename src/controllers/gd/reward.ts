@@ -1,30 +1,21 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 
-import { getGJChallengesInput } from "../../schemas/reward";
+import { GetGJChallengesInput } from "../../schemas/gd/reward";
 
 import { getUserById } from "../../services/user";
-import { getRandomQuests } from "../../services/quests";
+import { getRandomQuests } from "../../services/quest";
 
 import { questTypeToInt } from "../../utils/prismaEnums";
-import { checkSecret } from "../../utils/checks";
 import { xor, safeBase64Encode, base64Decode, hashGdObj, checkUserGjp2 } from "../../utils/crypt";
 
-import { Salts, Secret } from "../../helpers/enums";
+import { Salts } from "../../helpers/enums";
 
-export async function getGJChallengesHandler(request: FastifyRequest<{ Body: getGJChallengesInput }>, reply: FastifyReply) {
-    const { accountID, gjp2, udid, chk, secret } = request.body;
+export async function getGJChallengesController(request: FastifyRequest<{ Body: GetGJChallengesInput }>, reply: FastifyReply) {
+    const { accountID, gjp2, udid, chk } = request.body;
 
     const startTime = new Date("2024-03-01T00:00:00.000Z").getTime();
 
-    if (!checkSecret(secret, Secret.Common)) {
-        return reply.send(-1);
-    }
-
-    if (!accountID || !gjp2) {
-        return reply.send(-1);
-    }
-
-    const user = await getUserById(Number(accountID));
+    const user = await getUserById(accountID);
 
     if (!user) {
         return reply.send(-1);
@@ -36,8 +27,10 @@ export async function getGJChallengesHandler(request: FastifyRequest<{ Body: get
 
     const randomQuests = await getRandomQuests();
 
-    if (!randomQuests[0] || !randomQuests[1] || !randomQuests[2]) {
-        return reply.send(-1);
+    for (const quest of randomQuests) {
+        if (!quest) {
+            return reply.send(-1);
+        }
     }
 
     const quests: string[] = [];
@@ -69,5 +62,7 @@ export async function getGJChallengesHandler(request: FastifyRequest<{ Body: get
         )
     );
 
-    return reply.send(`CRsTl${result}|${hashGdObj(result, Salts.Challenge)}`);
+    const resultHash = hashGdObj(result, Salts.Challenge);
+
+    return reply.send(`CRsTl${result}|${resultHash}`);
 }

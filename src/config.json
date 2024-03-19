@@ -1,10 +1,11 @@
 {
     "database": {
-        "prefix": "db"
+        "path": "database1111"
     },
     "server": {
         "name": "CrystalGDPS",
-        "domain": "",
+        "domain": "http://localhost:1337",
+        "port": 1337,
         "onlyRealEmails": false
     },
     "commentColors": {
@@ -13,19 +14,6 @@
         "ElderMod": "#8f6ed2",
         "ListMod": "#048af5",
         "Admin": "#100ced"
-    },
-    "redisDb": {
-        "host": "",
-        "password": "",
-        "port": 0
-    },
-    "smtp": {
-        "host": "",
-        "port": 0,
-        "auth": {
-            "user": "",
-            "pass": ""
-        }
     },
     "timeLimits": {
         "accountActivation": 3600,

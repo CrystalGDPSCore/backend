@@ -1,15 +1,12 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 
-import { updateGJUserScoreInput } from "../../schemas/score";
+import { UpdateGJUserScoreInput } from "../../schemas/gd/score";
 
 import { getUserById, updateUserScore } from "../../services/user";
 
-import { checkSecret } from "../../utils/checks";
 import { checkUserGjp2 } from "../../utils/crypt";
 
-import { Secret } from "../../helpers/enums";
-
-export async function updateGJUserScoreHandler(request: FastifyRequest<{ Body: updateGJUserScoreInput }>, reply: FastifyReply) {
+export async function updateGJUserScoreController(request: FastifyRequest<{ Body: UpdateGJUserScoreInput }>, reply: FastifyReply) {
     const {
         accountID,
         gjp2,
@@ -33,19 +30,10 @@ export async function updateGJUserScoreHandler(request: FastifyRequest<{ Body: u
         accSpider,
         accExplosion,
         accSwing,
-        accJetpack,
-        secret
+        accJetpack
     } = request.body;
 
-    if (!checkSecret(secret, Secret.Common)) {
-        return reply.send(-1);
-    }
-
-    if (!accountID && !gjp2) {
-        return reply.send(-1);
-    }
-
-    const user = await getUserById(Number(accountID));
+    const user = await getUserById(accountID);
 
     if (!user) {
         return reply.send(-1);
@@ -55,28 +43,28 @@ export async function updateGJUserScoreHandler(request: FastifyRequest<{ Body: u
         return reply.send(-1);
     }
 
-    await updateUserScore(Number(accountID), {
-        stars: Number(stars),
-        moons: Number(moons),
-        secretCoins: Number(coins),
-        userCoins: Number(userCoins),
-        demons: Number(demons),
-        diamonds: Number(diamonds),
-        iconType: Number(iconType),
-        iconCube: Number(accIcon),
-        iconShip: Number(accShip),
-        iconBall: Number(accBall),
-        iconUfo: Number(accBird),
-        iconWave: Number(accDart),
-        iconRobot: Number(accRobot),
-        iconSpider: Number(accSpider),
-        iconSwing: Number(accSwing),
-        iconJetpack: Number(accJetpack),
-        iconExplosion: Number(accExplosion),
-        primaryColor: Number(color1),
-        secondaryColor: Number(color2),
-        glowColor: Number(color3),
-        hasGlow: Number(accGlow) == 1 ? true : false
+    await updateUserScore(accountID, {
+        stars: stars,
+        moons: moons,
+        secretCoins: coins,
+        userCoins: userCoins,
+        demons: demons,
+        diamonds: diamonds,
+        iconType: iconType,
+        iconCube: accIcon,
+        iconShip: accShip,
+        iconBall: accBall,
+        iconUfo: accBird,
+        iconWave: accDart,
+        iconRobot: accRobot,
+        iconSpider: accSpider,
+        iconSwing: accSwing,
+        iconJetpack: accJetpack,
+        iconExplosion: accExplosion,
+        primaryColor: color1,
+        secondaryColor: color2,
+        glowColor: color3,
+        hasGlow: Boolean(accGlow)
     });
 
     return reply.send(accountID);

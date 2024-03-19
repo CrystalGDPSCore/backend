@@ -6,30 +6,25 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { redis } from "../../utils/db";
 
 import {
-    registerGJAccountInput,
-    loginGJAccountInput,
-    backupGJAccountNewInput,
-    syncGJAccountNewInput,
-    updateGJAccSettingsInput
-} from "../../schemas/account";
+    RegisterGJAccountInput,
+    LoginGJAccountInput,
+    UpdateGJAccSettingsInput,
+    BackupGJAccountNewInput,
+    SyncGJAccountNewInput
+} from "../../schemas/gd/account";
 
-import { getUserByUserName, getUserByEmail, registerUser, updateUserSettings, getUserById } from "../../services/user";
+import { getUserByName, getUserByEmail, createUser, updateUserSettings, getUserById } from "../../services/user";
 
 import sendMail from "../../utils/sendMail";
-import { checkSecret } from "../../utils/checks";
 import { checkUserGjp2, decodeGjp2, generateUuid } from "../../utils/crypt";
 import { messageStateToEnum, friendStateToEnum, commentHistoryStateToEnum } from "../../utils/prismaEnums";
 
-import { Secret, QueryMode } from "../../helpers/enums";
+import { QueryMode } from "../../helpers/enums";
 
 import { database, server, timeLimits } from "../../config.json";
 
-export async function registerGJAccountHandler(request: FastifyRequest<{ Body: registerGJAccountInput }>, reply: FastifyReply) {
-    const { userName, password, email, secret } = request.body;
-
-    if (!checkSecret(secret, Secret.User)) {
-        return reply.send(-1);
-    }
+export async function registerGJAccountController(request: FastifyRequest<{ Body: RegisterGJAccountInput }>, reply: FastifyReply) {
+    const { userName, password, email } = request.body;
 
     if (userName.length < 3 || userName.length > 15) {
         return reply.send(-4);
@@ -43,11 +38,11 @@ export async function registerGJAccountHandler(request: FastifyRequest<{ Body: r
         return reply.send(-6);
     }
 
-    if (!Number.isNaN(Number(userName))) {
+    if (!Number.isNaN(parseInt(userName))) {
         return reply.send(-1);
     }
 
-    if (await getUserByUserName(userName, QueryMode.Insensitive)) {
+    if (await getUserByName(userName, QueryMode.Insensitive)) {
         return reply.send(-2);
     }
 
@@ -58,16 +53,16 @@ export async function registerGJAccountHandler(request: FastifyRequest<{ Body: r
 
         const uuid = generateUuid();
 
-        await sendMail(
-            `${server.name} | Account activation`,
-            email,
-            `Account activation link: ${server.domain}/account/activate?code=${uuid}`
-        );
+        await sendMail({
+            title: `${server.name} | Account activation`,
+            recipient: email,
+            body: `Account activation link: ${server.domain}/account/activate?code=${uuid}`
+        });
 
         await redis.hmset(`${uuid}:activation`, { userName, password, email });
         await redis.expire(`${uuid}:activation`, timeLimits.accountActivation);
     } else {
-        await registerUser({
+        await createUser({
             userName: userName,
             passHash: decodeGjp2(password),
             email: email
@@ -77,30 +72,26 @@ export async function registerGJAccountHandler(request: FastifyRequest<{ Body: r
     return reply.send(1);
 }
 
-export async function loginGJAccountHandler(request: FastifyRequest<{ Body: loginGJAccountInput }>, reply: FastifyReply) {
-    const { userName, gjp2, secret } = request.body;
+export async function loginGJAccountController(request: FastifyRequest<{ Body: LoginGJAccountInput }>, reply: FastifyReply) {
+    const { userName, gjp2 } = request.body;
 
-    const loginAttempts = await redis.get(`${request.ip}:login`);
-
-    if (!checkSecret(secret, Secret.User)) {
-        return reply.send(-1);
-    }
-
-    if (loginAttempts && Number(loginAttempts) == 5) {
-        return reply.send(-12);
-    }
-
-    const user = await getUserByUserName(userName, QueryMode.Default);
+    const user = await getUserByName(userName, QueryMode.Default);
 
     if (!user) {
         return reply.send(-11);
     }
 
+    const loginAttempts = await redis.get(`${user.id}:login`);
+
+    if (loginAttempts && parseInt(loginAttempts) == 5) {
+        return reply.send(-12);
+    }
+
     if (!checkUserGjp2(gjp2, user.passHash)) {
         if (!loginAttempts) {
-            await redis.set(`${request.ip}:login`, 1, "EX", timeLimits.loginAttempts);
+            await redis.set(`${user.id}:login`, 1, "EX", timeLimits.loginAttempts);
         } else {
-            await redis.incr(`${request.ip}:login`);
+            await redis.incr(`${user.id}:login`);
         }
 
         return reply.send(-11);
@@ -110,19 +101,15 @@ export async function loginGJAccountHandler(request: FastifyRequest<{ Body: logi
         return reply.send(-12);
     }
 
-    await redis.del(`${request.ip}:login`);
+    await redis.del(`${user.id}:login`);
 
     return reply.send(`${user.id},${user.id}`);
 }
 
-export async function updateGJAccSettingsHandler(request: FastifyRequest<{ Body: updateGJAccSettingsInput }>, reply: FastifyReply) {
-    const { accountID, gjp2, mS, frS, cS, yt, twitter, twitch, secret } = request.body;
+export async function updateGJAccSettingsController(request: FastifyRequest<{ Body: UpdateGJAccSettingsInput }>, reply: FastifyReply) {
+    const { accountID, gjp2, mS, frS, cS, yt, twitter, twitch } = request.body;
 
-    if (!checkSecret(secret, Secret.User)) {
-        return reply.send(-1);
-    }
-
-    const user = await getUserById(Number(accountID));
+    const user = await getUserById(accountID);
 
     if (!user) {
         return reply.send(-1);
@@ -132,10 +119,10 @@ export async function updateGJAccSettingsHandler(request: FastifyRequest<{ Body:
         return reply.send(-1);
     }
 
-    await updateUserSettings(Number(accountID), {
-        messageState: messageStateToEnum(Number(mS)),
-        friendState: friendStateToEnum(Number(frS)),
-        commentHistoryState: commentHistoryStateToEnum(Number(cS)),
+    await updateUserSettings(accountID, {
+        messageState: messageStateToEnum(mS),
+        friendState: friendStateToEnum(frS),
+        commentHistoryState: commentHistoryStateToEnum(cS),
         youtube: yt,
         twitter: twitter,
         twitch: twitch
@@ -144,26 +131,16 @@ export async function updateGJAccSettingsHandler(request: FastifyRequest<{ Body:
     return reply.send(1);
 }
 
-export async function backupGJAccountNewHandler(request: FastifyRequest<{ Body: backupGJAccountNewInput }>, reply: FastifyReply) {
-    const { accountID, gjp2, saveData, secret } = request.body;
+export async function backupGJAccountNewController(request: FastifyRequest<{ Body: BackupGJAccountNewInput }>, reply: FastifyReply) {
+    const { accountID, gjp2, saveData, gameVersion, binaryVersion } = request.body;
 
     const isAccountBackedUp = Boolean(await redis.exists(`${accountID}:backup`));
-
-    if (!checkSecret(secret, Secret.User)) {
-        return reply.send(-1);
-    }
 
     if (isAccountBackedUp) {
         return reply.send(-1);
     }
 
-    const saveDataNow = readFileSync(path.join(__dirname, "../../../", "data", "account", `${accountID}.acc`), "utf-8");
-
-    if (saveData == saveDataNow) {
-        return reply.send(-1);
-    }
-
-    const user = await getUserById(Number(accountID));
+    const user = await getUserById(accountID);
 
     if (!user) {
         return reply.send(-1);
@@ -173,27 +150,23 @@ export async function backupGJAccountNewHandler(request: FastifyRequest<{ Body: 
         return reply.send(-1);
     }
 
-    writeFileSync(path.join(__dirname, "../../../", "data", "account", `${accountID}.acc`), saveData);
+    writeFileSync(path.join(__dirname, "../../../", "data", "account", `${accountID}.acc`), `${saveData};${gameVersion};${binaryVersion};a;a`);
 
     await redis.set(`${accountID}:backup`, 1, "EX", timeLimits.accountBackup);
 
     return reply.send(1);
 }
 
-export async function syncGJAccountNewHandler(request: FastifyRequest<{ Body: syncGJAccountNewInput }>, reply: FastifyReply) {
-    const { accountID, gjp2, secret } = request.body;
+export async function syncGJAccountNewController(request: FastifyRequest<{ Body: SyncGJAccountNewInput }>, reply: FastifyReply) {
+    const { accountID, gjp2 } = request.body;
 
     const isAccountSynced = Boolean(await redis.exists(`${accountID}:sync`));
-
-    if (!checkSecret(secret, Secret.User)) {
-        return reply.send(-1);
-    }
 
     if (isAccountSynced) {
         return reply.send(-1);
     }
 
-    const user = await getUserById(Number(accountID));
+    const user = await getUserById(accountID);
 
     if (!user) {
         return reply.send(-1);
@@ -208,12 +181,12 @@ export async function syncGJAccountNewHandler(request: FastifyRequest<{ Body: sy
 
         await redis.set(`${accountID}:sync`, 1, "EX", timeLimits.accountSync);
 
-        return reply.send(`${saveData};22;40;a;a`);
+        return reply.send(saveData);
     } catch {
         return reply.send(-1);
     }
 }
 
-export async function getAccountUrlHandler(request: FastifyRequest, reply: FastifyReply) {
-    return reply.send(`${server.domain}/${database.prefix}`);
+export async function getAccountUrlController(request: FastifyRequest, reply: FastifyReply) {
+    return reply.send(`${server.domain}/${database.path}`);
 }

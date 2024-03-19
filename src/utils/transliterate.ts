@@ -6,13 +6,20 @@ const slug = createSlug({
     maintainCase: true,
     symbols: false,
     custom: [
-        "'", "[", "]", "(", ")",
-        "/", "\"", "1", "2", "3", // add more symbols
-        "4", "5", "6", "7", "8",
-        "9", "0", ".", "~"
+        "!", "\"", "#", "$",
+        "%", "&", "'", "(",
+        ")", "*", "+", ",",
+        "-", ".", "/", ":",
+        ";", "<", "=", ">",
+        "?", "@", "[", "\\",
+        "]", "^", "_", "`",
+        "{", "|", "}", "~",
+        "0", "1", "2", "3",
+        "4", "5", "6", "7",
+        "8", "9"
     ]
 });
 
-export default function transliterate(str: string) {
-    return slug(normalizeUnicodeText(str));
+export default function transliterate(text: string) {
+    return slug(normalizeUnicodeText(text));
 }

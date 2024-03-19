@@ -1,12 +1,11 @@
 import { db } from "../utils/db";
 
-import { registerUserInput, updateUserAccessInput, updateUserSettingsInput } from "../schemas/user";
-import { updateUserScoreInput } from "../schemas/score";
+import { CreateUserInput, UpdateUserAccessInput, UpdateUserSettingsInput, UpdateUserScoreInput } from "../schemas/service/user";
 
 import { QueryMode } from "../helpers/enums";
 
 export async function getUserById(id: number) {
-    const user = await db.users.findUnique({
+    const user = await db.user.findUnique({
         where: {
             id
         },
@@ -18,8 +17,8 @@ export async function getUserById(id: number) {
     return user;
 }
 
-export async function getUserByUserName(userName: string, mode: QueryMode) {
-    const user = await db.users.findFirst({
+export async function getUserByName(userName: string, mode: QueryMode) {
+    const user = await db.user.findFirst({
         where: {
             userName: {
                 equals: userName,
@@ -35,7 +34,7 @@ export async function getUserByUserName(userName: string, mode: QueryMode) {
 }
 
 export async function getUserByEmail(email: string, mode: QueryMode) {
-    const user = await db.users.findFirst({
+    const user = await db.user.findFirst({
         where: {
             email: {
                 equals: email,
@@ -50,8 +49,8 @@ export async function getUserByEmail(email: string, mode: QueryMode) {
     return user;
 }
 
-export async function registerUser(input: registerUserInput) {
-    const user = await db.users.create({
+export async function createUser(input: CreateUserInput) {
+    const user = await db.user.create({
         data: {
             ...input,
             stats: {
@@ -63,56 +62,39 @@ export async function registerUser(input: registerUserInput) {
         }
     });
 
-    return user.id;
+    return user;
 }
 
-export async function updateUserAccess(userId: number, input: updateUserAccessInput) {
-    await db.users.update({
+export async function updateUserAccess(userId: number, input: UpdateUserAccessInput) {
+    const user = await db.user.update({
         where: {
             id: userId
         },
         data: input
     });
+
+    return user;
 }
 
 
-export async function updateUserSettings(userId: number, input: updateUserSettingsInput) {
-    await db.users.update({
+export async function updateUserSettings(userId: number, input: UpdateUserSettingsInput) {
+    const user = await db.user.update({
         where: {
             id: userId
         },
         data: input
     });
+
+    return user;
 }
 
-export async function updateUserScore(userId: number, input: updateUserScoreInput) {
-    await db.userStats.update({
+export async function updateUserScore(userId: number, input: UpdateUserScoreInput) {
+    const user = await db.userStats.update({
         where: {
             userId
         },
         data: input
     });
-}
 
-export function getShownIcon(iconType: number) {
-    switch (iconType) {
-        case 1:
-            return "Ship";
-        case 2:
-            return "Ball";
-        case 3:
-            return "Ufo";
-        case 4:
-            return "Wave";
-        case 5:
-            return "Robot";
-        case 6:
-            return "Spider";
-        case 7:
-            return "Swing";
-        case 8:
-            return "Jetpack"
-        default:
-            return "Cube";
-    }
+    return user;
 }

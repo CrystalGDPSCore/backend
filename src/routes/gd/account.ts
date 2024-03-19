@@ -1,19 +1,63 @@
 import { FastifyInstance } from "fastify";
 
+import { ZodTypeProvider } from "fastify-type-provider-zod";
+
 import {
-    registerGJAccountHandler,
-    loginGJAccountHandler,
-    backupGJAccountNewHandler,
-    syncGJAccountNewHandler,
-    updateGJAccSettingsHandler,
-    getAccountUrlHandler
+    registerGJAccountController,
+    loginGJAccountController,
+    updateGJAccSettingsController,
+    backupGJAccountNewController,
+    syncGJAccountNewController,
+    getAccountUrlController
 } from "../../controllers/gd/account";
 
+import checkSecret from "../../middlewares/checkSecret";
+
+import {
+    registerGJAccountSchema,
+    loginGJAccountSchema,
+    updateGJAccSettingsSchema,
+    backupGJAccountNewSchema,
+    syncGJAccountNewSchema
+} from "../../schemas/gd/account";
+
+import { Secret } from "../../helpers/enums";
+
 export default async function gdAccountRoutes(fastify: FastifyInstance) {
-    fastify.post("/accounts/registerGJAccount.php", registerGJAccountHandler);
-    fastify.post("/accounts/loginGJAccount.php", loginGJAccountHandler);
-    fastify.post("/database/accounts/backupGJAccountNew.php", backupGJAccountNewHandler);
-    fastify.post("/database/accounts/syncGJAccountNew.php", syncGJAccountNewHandler);
-    fastify.post("/updateGJAccSettings20.php", updateGJAccSettingsHandler);
-    fastify.post("/getAccountURL.php", getAccountUrlHandler);
+    fastify.withTypeProvider<ZodTypeProvider>().post("/accounts/registerGJAccount.php", {
+        preHandler: checkSecret(Secret.User),
+        schema: {
+            body: registerGJAccountSchema
+        }
+    }, registerGJAccountController);
+
+    fastify.withTypeProvider<ZodTypeProvider>().post("/accounts/loginGJAccount.php", {
+        preHandler: checkSecret(Secret.User),
+        schema: {
+            body: loginGJAccountSchema
+        }
+    }, loginGJAccountController);
+
+    fastify.withTypeProvider<ZodTypeProvider>().post("/updateGJAccSettings20.php", {
+        preHandler: checkSecret(Secret.User),
+        schema: {
+            body: updateGJAccSettingsSchema
+        }
+    }, updateGJAccSettingsController);
+
+    fastify.withTypeProvider<ZodTypeProvider>().post("/database/accounts/backupGJAccountNew.php", {
+        preHandler: checkSecret(Secret.User),
+        schema: {
+            body: backupGJAccountNewSchema
+        }
+    }, backupGJAccountNewController);
+
+    fastify.withTypeProvider<ZodTypeProvider>().post("/database/accounts/syncGJAccountNew.php", {
+        preHandler: checkSecret(Secret.User),
+        schema: {
+            body: syncGJAccountNewSchema
+        }
+    }, syncGJAccountNewController);
+
+    fastify.post("/getAccountURL.php", getAccountUrlController);
 }
