@@ -8,7 +8,7 @@ import fastifyFormbody from "@fastify/formbody";
 
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 
-import apiCustomContentRoutes from "./routes/api/customContent";
+import apiSongRoutes from "./routes/api/song";
 
 import gdAccountRoutes from "./routes/gd/account";
 import gdCustomContentRoutes from "./routes/gd/customContent";
@@ -38,7 +38,7 @@ async function main() {
         decorateReply: false
     });
 
-    for (const apiRoute of [apiCustomContentRoutes]) {
+    for (const apiRoute of [apiSongRoutes]) {
         fastify.register(apiRoute, { prefix: "api" });
     }
 

@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 
 import { redis } from "../../utils/db";
 
-import { ApiAddSongInput } from "../../schemas/api/customContent";
+import { ApiAddSongInput } from "../../schemas/api/song";
 
 import { getSongByResource, createSong } from "../../services/song";
 

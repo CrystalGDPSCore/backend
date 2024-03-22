@@ -2,12 +2,12 @@ import { FastifyInstance } from "fastify";
 
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 
-import { apiAddSongController } from "../../controllers/api/customContent";
+import { apiAddSongController } from "../../controllers/api/song";
 
-import { apiAddSongSchema, apiAddSongResponseSchema } from "../../schemas/api/customContent";
+import { apiAddSongSchema, apiAddSongResponseSchema } from "../../schemas/api/song";
 import { songErrorResponseSchema } from "../../schemas/api/error";
 
-export default async function apiCustomContentRoutes(fastify: FastifyInstance) {
+export default async function apiSongRoutes(fastify: FastifyInstance) {
     fastify.withTypeProvider<ZodTypeProvider>().post("/song/add", {
         schema: {
             body: apiAddSongSchema,
