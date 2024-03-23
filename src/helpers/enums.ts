@@ -30,3 +30,8 @@ export enum SongError {
     SongIncorrectLink = "SONG_INCORRECT_LINK",
     SongAddedTimeLimit = "SONG_ADDED_TIME_LIMIT"
 }
+
+export enum UserError {
+    UserNotFound = "USER_NOT_FOUND",
+    UserIncorrectPassword = "USER_INCORRECT_PASSWORD"
+}

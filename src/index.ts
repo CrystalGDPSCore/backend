@@ -5,10 +5,12 @@ import path from "path";
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
 import fastifyFormbody from "@fastify/formbody";
+import fastifyJwt from "@fastify/jwt";
 
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 
 import apiSongRoutes from "./routes/api/song";
+import apiUserRoutes from "./routes/api/user";
 
 import gdAccountRoutes from "./routes/gd/account";
 import gdCustomContentRoutes from "./routes/gd/customContent";
@@ -28,6 +30,10 @@ async function main() {
 
     fastify.register(fastifyFormbody);
 
+    fastify.register(fastifyJwt, {
+        secret: process.env.JWT_SECRET as string
+    });
+
     fastify.register(fastifyStatic, {
         root: path.join(__dirname, "../data/songs"),
         prefix: "/songs"
@@ -38,7 +44,7 @@ async function main() {
         decorateReply: false
     });
 
-    for (const apiRoute of [apiSongRoutes]) {
+    for (const apiRoute of [apiSongRoutes, apiUserRoutes]) {
         fastify.register(apiRoute, { prefix: "api" });
     }
 
