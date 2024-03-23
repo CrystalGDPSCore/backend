@@ -16,8 +16,9 @@ import { timeLimits } from "../../config.json";
 
 export async function apiAddSongController(request: FastifyRequest<{ Body: ApiAddSongInput }>, reply: FastifyReply) {
     const { song } = request.body;
+    const { userId } = await request.jwtDecode<{ userId: number }>();
 
-    if (await redis.exists(`${request.ip}:addedSong`)) {
+    if (await redis.exists(`${userId}:addedSong`)) {
         return reply.code(202).send({
             success: false,
             code: SongError.SongAddedTimeLimit,
@@ -61,7 +62,7 @@ export async function apiAddSongController(request: FastifyRequest<{ Body: ApiAd
         name: addedSongInfo.artist.name
     });
 
-    await redis.set(`${request.ip}:addedSong`, 1, "EX", timeLimits.addedSong);
+    await redis.set(`${userId}:addedSong`, 1, "EX", timeLimits.addedSong);
 
     return reply.send({
         success: true,
