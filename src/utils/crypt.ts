@@ -57,8 +57,14 @@ export function hashPassword(password: string) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync());
 }
 
-export function decodeGjp2(password: string) {
+export function createGjp2(password: string) {
     const gjp2 = hashGdObj(password, Salts.RegisterUser);
+
+    return gjp2;
+}
+
+export function encodeGjp2(password: string) {
+    const gjp2 = createGjp2(password);
     
     return hashPassword(gjp2);
 }

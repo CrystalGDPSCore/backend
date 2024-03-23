@@ -16,7 +16,7 @@ import {
 import { getUserByName, getUserByEmail, createUser, updateUserSettings, getUserById } from "../../services/user";
 
 import sendMail from "../../utils/sendMail";
-import { checkUserGjp2, decodeGjp2, generateUuid } from "../../utils/crypt";
+import { checkUserGjp2, encodeGjp2, generateUuid } from "../../utils/crypt";
 import { messageStateToEnum, friendStateToEnum, commentHistoryStateToEnum } from "../../utils/prismaEnums";
 
 import { QueryMode } from "../../helpers/enums";
@@ -64,7 +64,7 @@ export async function registerGJAccountController(request: FastifyRequest<{ Body
     } else {
         await createUser({
             userName: userName,
-            passHash: decodeGjp2(password),
+            passHash: encodeGjp2(password),
             email: email
         });
     }
