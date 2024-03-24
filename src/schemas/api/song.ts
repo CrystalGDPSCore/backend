@@ -1,13 +1,10 @@
 import { z } from "zod";
 
-export const apiAddSongSchema = z.object({
-    song: z.union([
-        z.number().int(),
-        z.string().url()
-    ])
+export const apiGetSongInfoSchema = z.object({
+    id: z.number().int()
 });
 
-export const apiAddSongResponseSchema = z.object({
+export const apiGetSongInfoResponseSchema = z.object({
     success: z.boolean(),
     song: z.object({
         id: z.number().int(),
@@ -21,5 +18,16 @@ export const apiAddSongResponseSchema = z.object({
         })
     })
 });
+
+export type ApiGetSongInfoInput = z.infer<typeof apiGetSongInfoSchema>;
+
+export const apiAddSongSchema = z.object({
+    song: z.union([
+        z.number().int(),
+        z.string().url()
+    ])
+});
+
+export const apiAddSongResponseSchema = apiGetSongInfoResponseSchema.extend({});
 
 export type ApiAddSongInput = z.infer<typeof apiAddSongSchema>;

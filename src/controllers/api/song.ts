@@ -2,9 +2,9 @@ import { FastifyRequest, FastifyReply } from "fastify";
 
 import { redis } from "../../utils/db";
 
-import { ApiAddSongInput } from "../../schemas/api/song";
+import { ApiAddSongInput, ApiGetSongInfoInput } from "../../schemas/api/song";
 
-import { getSongByResource, createSong } from "../../services/song";
+import { getSongByResource, getSongById, createSong } from "../../services/song";
 
 import { addDataToMusicLibrary } from "../../utils/musicLibrary";
 import { convertSongUrlToResource } from "../../utils/converts";
@@ -13,6 +13,25 @@ import { getAudioFromNewgrounds, getAudioFromYoutube } from "../../utils/fetch";
 import { SongError } from "../../helpers/enums";
 
 import { timeLimits } from "../../config.json";
+
+export async function apiGetSongInfoController(request: FastifyRequest<{ Body: ApiGetSongInfoInput }>, reply: FastifyReply) {
+    const { id } = request.body;
+
+    const songInfo = await getSongById(id);
+
+    if (!songInfo) {
+        return reply.code(500).send({
+            success: false,
+            code: SongError.SongNotFound,
+            message: `Song with this id ${id} doesn't exist`
+        });
+    }
+
+    return reply.send({
+        success: true,
+        song: songInfo
+    });
+}
 
 export async function apiAddSongController(request: FastifyRequest<{ Body: ApiAddSongInput }>, reply: FastifyReply) {
     const { song } = request.body;
