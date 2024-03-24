@@ -15,11 +15,11 @@ model User {
   messageState        MessageState        @default(All)
   friendState         FriendState         @default(All)
   commentHistoryState CommentHistoryState @default(All)
-  youtube             String              @default("")
-  twitter             String              @default("")
-  twitch              String              @default("")
+  youtube             String?
+  twitter             String?
+  twitch              String?
   modLevel            ModLevel            @default(None)
-  commentColor        String              @default("#ffffff")
+  commentColor        String?
   modRequested        Boolean             @default(false)
   isDisabled          Boolean             @default(false)
   registerDate        DateTime            @default(now())
@@ -33,30 +33,34 @@ model User {
 }
 
 model UserStats {
-  userId         Int     @id @unique
-  stars          Int     @default(0)
-  moons          Int     @default(0)
-  secretCoins    Int     @default(0)
-  userCoins      Int     @default(0)
-  demons         Int     @default(0)
-  creatorPoints  Int     @default(0)
-  diamonds       Int     @default(0)
-  iconType       Int     @default(0)
-  iconCube       Int     @default(1)
-  iconShip       Int     @default(1)
-  iconBall       Int     @default(1)
-  iconUfo        Int     @default(1)
-  iconWave       Int     @default(1)
-  iconRobot      Int     @default(1)
-  iconSpider     Int     @default(1)
-  iconSwing      Int     @default(1)
-  iconJetpack    Int     @default(1)
-  iconExplosion  Int     @default(1)
-  primaryColor   Int     @default(0)
-  secondaryColor Int     @default(3)
-  glowColor      Int     @default(-1)
-  hasGlow        Boolean @default(false)
-  user           User    @relation(fields: [userId], references: [id])
+  userId           Int       @id @unique
+  stars            Int       @default(0)
+  moons            Int       @default(0)
+  secretCoins      Int       @default(0)
+  userCoins        Int       @default(0)
+  demons           Int       @default(0)
+  creatorPoints    Int       @default(0)
+  diamonds         Int       @default(0)
+  iconType         Int       @default(0)
+  iconCube         Int       @default(1)
+  iconShip         Int       @default(1)
+  iconBall         Int       @default(1)
+  iconUfo          Int       @default(1)
+  iconWave         Int       @default(1)
+  iconRobot        Int       @default(1)
+  iconSpider       Int       @default(1)
+  iconSwing        Int       @default(1)
+  iconJetpack      Int       @default(1)
+  iconExplosion    Int       @default(1)
+  primaryColor     Int       @default(0)
+  secondaryColor   Int       @default(3)
+  glowColor        Int       @default(-1)
+  hasGlow          Boolean   @default(false)
+  totalSmallChests Int       @default(0)
+  lastSmallChest   DateTime?
+  totalBigChests   Int       @default(0)
+  lastBigChest     DateTime?
+  user             User      @relation(fields: [userId], references: [id])
 }
 
 model UserComment {
@@ -74,7 +78,7 @@ model Comment {
   userId      Int
   itemId      Int
   comment     String
-  percent     Int
+  percent     Int      @default(0)
   likes       Int      @default(0)
   isSpam      Boolean  @default(false)
   isLevelList Boolean  @default(false)
@@ -105,7 +109,7 @@ model FriendRequest {
   id          Int      @id @default(autoincrement())
   userId      Int
   recipientId Int
-  comment     String
+  comment     String?
   postedDate  DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id])
 }
