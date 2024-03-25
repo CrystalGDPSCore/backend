@@ -15,8 +15,20 @@ export enum Salts {
 
 export enum LikeType {
     Level = 1,
-    LevelComment = 2,
-    UserComment = 3
+    LevelComment,
+    UserComment
+}
+
+export enum IconType {
+    Cube = "Cube",
+    Ship = "Ship",
+    Ball = "Ball",
+    Ufo = "Ufo",
+    Wave = "Wave",
+    Robot = "Robot",
+    Spider = "Spider",
+    Swing = "Swing",
+    Jetpack = "Jetpack"
 }
 
 export enum QueryMode {

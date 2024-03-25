@@ -4,7 +4,7 @@ import { GetGJSongInfoInput } from "../../schemas/gd/customContent";
 
 import { getSongById } from "../../services/song";
 
-import { gdObjToString } from "../../utils/gd";
+import { gdObjToString } from "../../utils/gdForm";
 
 import { server } from "../../config.json";
 

@@ -8,10 +8,10 @@ import { getFriendRequestsByRecipientId, friendRequestExists } from "../../servi
 import { getNewFriendsByUserId, friendExists } from "../../services/friendList";
 
 import { checkUserGjp2 } from "../../utils/crypt";
-import { gdObjToString, getShownIcon } from "../../utils/gd";
+import { gdObjToString } from "../../utils/gdForm";
 import { modLevelToInt } from "../../utils/prismaEnums";
 
-import { QueryMode } from "../../helpers/enums";
+import { QueryMode, IconType } from "../../helpers/enums";
 
 import { commentColors } from "../../config.json";
 
@@ -124,6 +124,8 @@ export async function getGJUsersController(request: FastifyRequest<{ Body: GetGJ
         return reply.send(-1);
     }
 
+    const shownIcon = Object.values(IconType)[userTarget.stats.iconType];
+
     const userInfoObj = {
         1: userTarget.userName,
         2: userTarget.id,
@@ -138,7 +140,7 @@ export async function getGJUsersController(request: FastifyRequest<{ Body: GetGJ
         10: userTarget.stats.primaryColor,
         11: userTarget.stats.secondaryColor,
         15: userTarget.stats.hasGlow ? 2 : 0,
-        9: userTarget.stats[`icon${getShownIcon(userTarget.stats.iconType)}`],
+        9: userTarget.stats[`icon${shownIcon}`],
         14: userTarget.stats.iconType
     };
 
