@@ -6,7 +6,7 @@ export enum Secret {
     Admin = "Wmfx2878gb9"
 }
 
-export enum Salts {
+export enum Salt {
     Level = "xI25fpAapCQg",
     Challenge = "oC36fpYaPtdg",
     Reward = "pC26fpYaQCtg",
@@ -29,6 +29,24 @@ export enum IconType {
     Spider = "Spider",
     Swing = "Swing",
     Jetpack = "Jetpack"
+}
+
+export enum ChestType {
+    Small = 1,
+    Big
+}
+
+export enum ShardType {
+    FireShard = 1,
+    IceShard,
+    PoisonShard,
+    ShadowShard,
+    LavaShard,
+    EarthShard = 10,
+    BloodShard,
+    MetalShard,
+    LightShard,
+    SoulShard
 }
 
 export enum QueryMode {

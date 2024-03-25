@@ -2,7 +2,7 @@ import * as crypto from "crypto";
 import * as bcrypt from "bcrypt";
 import * as itertools from "itertools";
 
-import { Salts } from "../helpers/enums";
+import { Salt } from "../helpers/enums";
 
 export function generateUuid() {
     return crypto.randomUUID();
@@ -34,7 +34,7 @@ export function safeBase64Decode(str: string) {
     return base64Decode(str.replace(/\-/g, "+").replace(/\_/g, "/"));
 }
 
-export function hashGdObj(str: string, salt: Salts) {
+export function hashGdObj(str: string, salt: Salt) {
     const hash = crypto.createHash("sha1").update(`${str}${salt}`).digest("hex");
     
     return hash;
@@ -48,7 +48,7 @@ export function hashGdLevel(levelData: string) {
         data += levelData[i * level];
     }
 
-    const hash = crypto.createHash("sha1").update(`${data}${Salts.Level}`, "utf-8").digest("hex");
+    const hash = crypto.createHash("sha1").update(`${data}${Salt.Level}`, "utf-8").digest("hex");
 
     return hash;
 }
@@ -58,7 +58,7 @@ export function hashPassword(password: string) {
 }
 
 export function createGjp2(password: string) {
-    const gjp2 = hashGdObj(password, Salts.RegisterUser);
+    const gjp2 = hashGdObj(password, Salt.RegisterUser);
 
     return gjp2;
 }

@@ -21,5 +21,21 @@
         "accountSync": 30,
         "loginAttempts": 3600,
         "addedSong": 300
+    },
+    "chests": {
+        "small": {
+            "orbs": [200, 400],
+            "diamonds": [2, 10],
+            "shardChance": 0.1,
+            "keyChance": 0.2,
+            "waitTime": 14400
+        },
+        "big": {
+            "orbs": [2000, 4000],
+            "diamonds": [20, 100],
+            "shardChance": 0.4,
+            "keyChance": 0.5,
+            "waitTime": 28800
+        }
     }
 }
