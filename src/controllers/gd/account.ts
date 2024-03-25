@@ -19,8 +19,6 @@ import sendMail from "../../utils/sendMail";
 import { checkUserGjp2, encodeGjp2, generateUuid } from "../../utils/crypt";
 import { messageStateToEnum, friendStateToEnum, commentHistoryStateToEnum } from "../../utils/prismaEnums";
 
-import { QueryMode } from "../../helpers/enums";
-
 import { database, server, timeLimits } from "../../config.json";
 
 export async function registerGJAccountController(request: FastifyRequest<{ Body: RegisterGJAccountInput }>, reply: FastifyReply) {
@@ -42,12 +40,12 @@ export async function registerGJAccountController(request: FastifyRequest<{ Body
         return reply.send(-1);
     }
 
-    if (await getUserByName(userName, QueryMode.Insensitive)) {
+    if (await getUserByName(userName, "insensitive")) {
         return reply.send(-2);
     }
 
     if (server.onlyRealEmails) {
-        if (await getUserByEmail(email, QueryMode.Insensitive)) {
+        if (await getUserByEmail(email, "insensitive")) {
             return reply.send(-3);
         }
 
@@ -75,7 +73,7 @@ export async function registerGJAccountController(request: FastifyRequest<{ Body
 export async function loginGJAccountController(request: FastifyRequest<{ Body: LoginGJAccountInput }>, reply: FastifyReply) {
     const { userName, gjp2 } = request.body;
 
-    const user = await getUserByName(userName, QueryMode.Default);
+    const user = await getUserByName(userName, "default");
 
     if (!user) {
         return reply.send(-11);

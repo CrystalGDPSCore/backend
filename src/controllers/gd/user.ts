@@ -11,7 +11,7 @@ import { checkUserGjp2 } from "../../utils/crypt";
 import { gdObjToString } from "../../utils/gdForm";
 import { modLevelToInt } from "../../utils/prismaEnums";
 
-import { QueryMode, IconType } from "../../helpers/enums";
+import { IconType } from "../../helpers/enums";
 
 import { commentColors } from "../../config.json";
 
@@ -118,7 +118,7 @@ export async function getGJUsersController(request: FastifyRequest<{ Body: GetGJ
         return reply.send(-1);
     }
 
-    const userTarget = await getUserByName(str, QueryMode.Insensitive);
+    const userTarget = await getUserByName(str, "insensitive");
 
     if (!userTarget || !userTarget.stats) {
         return reply.send(-1);

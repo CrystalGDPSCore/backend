@@ -32,8 +32,8 @@ export enum IconType {
 }
 
 export enum QueryMode {
-    Default = "default",
-    Insensitive = "insensitive"
+    default,
+    insensitive
 }
 
 export enum SongError {

@@ -17,12 +17,12 @@ export async function getUserById(id: number) {
     return user;
 }
 
-export async function getUserByName(userName: string, mode: QueryMode) {
+export async function getUserByName(userName: string, mode: keyof typeof QueryMode) {
     const user = await db.user.findFirst({
         where: {
             userName: {
                 equals: userName,
-                mode: mode
+                mode
             }
         },
         include: {
@@ -33,12 +33,12 @@ export async function getUserByName(userName: string, mode: QueryMode) {
     return user;
 }
 
-export async function getUserByEmail(email: string, mode: QueryMode) {
+export async function getUserByEmail(email: string, mode: keyof typeof QueryMode) {
     const user = await db.user.findFirst({
         where: {
             email: {
                 equals: email,
-                mode: mode
+                mode
             }
         },
         include: {
@@ -89,12 +89,12 @@ export async function updateUserSettings(userId: number, input: UpdateUserSettin
 }
 
 export async function updateUserScore(userId: number, input: UpdateUserScoreInput) {
-    const user = await db.userStats.update({
+    const userStats = await db.userStats.update({
         where: {
             userId
         },
         data: input
     });
 
-    return user;
+    return userStats;
 }
