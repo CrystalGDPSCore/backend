@@ -15,11 +15,11 @@ model User {
   messageState        MessageState        @default(All)
   friendState         FriendState         @default(All)
   commentHistoryState CommentHistoryState @default(All)
-  youtube             String?
-  twitter             String?
-  twitch              String?
+  youtube             String              @default("")
+  twitter             String              @default("")
+  twitch              String              @default("")
   modLevel            ModLevel            @default(None)
-  commentColor        String?
+  commentColor        String              @default("#ffffff")
   modRequested        Boolean             @default(false)
   isDisabled          Boolean             @default(false)
   registerDate        DateTime            @default(now())
@@ -109,7 +109,7 @@ model FriendRequest {
   id          Int      @id @default(autoincrement())
   userId      Int
   recipientId Int
-  comment     String?
+  comment     String
   postedDate  DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id])
 }
