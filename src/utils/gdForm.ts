@@ -1,4 +1,4 @@
-export function gdObjToString(obj: { [ key: number ]: any }, sep: string = ":") {
+export function gdObjToString(obj: Record<number, any>, sep: string = ":") {
     let responseString: string[] = [];
 
     for (const [key, value] of Object.entries(obj)) {
