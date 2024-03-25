@@ -6,12 +6,12 @@ import { getUserByName } from "../../services/user";
 
 import { checkUserGjp2, createGjp2 } from "../../utils/crypt";
 
-import { UserError, QueryMode } from "../../helpers/enums";
+import { UserError } from "../../helpers/enums";
 
 export async function apiLoginUserController(request: FastifyRequest<{ Body: ApiLoginUserInput }>, reply: FastifyReply) {
     const { name, password } = request.body;
 
-    const user = await getUserByName(name, QueryMode.Default);
+    const user = await getUserByName(name, "default");
 
     if (!user) {
         return reply.code(500).send({
