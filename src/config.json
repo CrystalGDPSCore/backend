@@ -20,7 +20,8 @@
         "accountBackup": 30,
         "accountSync": 30,
         "loginAttempts": 3600,
-        "addedSong": 300
+        "addedSong": 300,
+        "uploadUserComment": 30
     },
     "chests": {
         "small": {
