@@ -109,7 +109,7 @@ model FriendRequest {
   id          Int      @id @default(autoincrement())
   userId      Int
   recipientId Int
-  comment     String
+  comment     String   @default("")
   postedDate  DateTime @default(now()) @db.Timestamptz(6)
   user        User     @relation(fields: [userId], references: [id])
 }
