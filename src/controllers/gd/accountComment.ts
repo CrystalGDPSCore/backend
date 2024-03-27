@@ -2,10 +2,10 @@ import { FastifyRequest, FastifyReply } from "fastify";
 
 import { redis } from "../../utils/db";
 
-import { UploadGJAccCommentInput, GetGJAccountCommentsInput } from "../../schemas/gd/accountComment";
+import { UploadGJAccCommentInput, GetGJAccountCommentsInput, DeleteGJAccCommentInput } from "../../schemas/gd/accountComment";
 
 import { getUserById } from "../../services/user";
-import { createUserComment, getUserComments, getUserCommentsCount } from "../../services/userComment";
+import { createUserComment, getUserComments, getUserCommentsCount, deleteUserComment } from "../../services/userComment";
 
 import { checkUserGjp2, safeBase64Decode, safeBase64Encode } from "../../utils/crypt";
 import { gdObjToString } from "../../utils/gdForm";
@@ -85,4 +85,22 @@ export async function getGJAccountCommentsController(request: FastifyRequest<{ B
     });
 
     return reply.send(`${commentData.join("|")}#${getUserCommentsCount(userTarget.id)}:${page * 10}:10`);
+}
+
+export async function deleteGJAccCommentController(request: FastifyRequest<{ Body: DeleteGJAccCommentInput }>, reply: FastifyReply) {
+    const { accountID, gjp2, commentID } = request.body;
+
+    const user = await getUserById(accountID);
+
+    if (!user) {
+        return reply.send(-1);
+    }
+
+    if (!checkUserGjp2(gjp2, user.passHash)) {
+        return reply.send(-1);
+    }
+
+    await deleteUserComment(accountID, commentID);
+
+    return reply.send(1);
 }

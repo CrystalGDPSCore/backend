@@ -17,3 +17,12 @@ export const getGJAccountCommentsSchema = z.object({
 });
 
 export type GetGJAccountCommentsInput = z.infer<typeof getGJAccountCommentsSchema>;
+
+export const deleteGJAccCommentSchema = z.object({
+    accountID: z.coerce.number(),
+    gjp2: z.string(),
+    commentID: z.coerce.number(),
+    secret: z.string()
+});
+
+export type DeleteGJAccCommentInput = z.infer<typeof deleteGJAccCommentSchema>;

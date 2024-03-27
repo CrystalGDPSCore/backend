@@ -35,3 +35,14 @@ export async function getUserCommentsCount(userId: number) {
 
     return userCommentsCount;
 }
+
+export async function deleteUserComment(userId: number, commentId: number) {
+    const userComment = await db.userComment.delete({
+        where: {
+            userId,
+            id: commentId
+        }
+    });
+
+    return userComment;
+}
