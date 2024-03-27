@@ -8,3 +8,12 @@ export const uploadGJAccCommentSchema = z.object({
 });
 
 export type UploadGJAccCommentInput = z.infer<typeof uploadGJAccCommentSchema>;
+
+export const getGJAccountCommentsSchema = z.object({
+    accountID: z.array(z.coerce.number()),
+    gjp2: z.string(),
+    page: z.coerce.number(),
+    secret: z.string()
+});
+
+export type GetGJAccountCommentsInput = z.infer<typeof getGJAccountCommentsSchema>;

@@ -10,3 +10,28 @@ export async function createUserComment(userId: number, comment: string) {
 
     return userComment;
 }
+
+export async function getUserComments(userId: number, offset: number) {
+    const userComments = await db.userComment.findMany({
+        where: {
+            userId
+        },
+        take: 10,
+        skip: offset,
+        orderBy: {
+            id: "desc"
+        }
+    });
+
+    return userComments;
+}
+
+export async function getUserCommentsCount(userId: number) {
+    const userCommentsCount = await db.userComment.count({
+        where: {
+            userId
+        }
+    });
+
+    return userCommentsCount;
+}
