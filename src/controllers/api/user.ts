@@ -21,6 +21,14 @@ export async function apiLoginUserController(request: FastifyRequest<{ Body: Api
         });
     }
 
+    if (user.isDisabled) {
+        return reply.code(500).send({
+            success: false,
+            code: UserError.UserIsDisabled,
+            message: "This user is disabled"
+        });
+    }
+
     if (!checkUserGjp2(createGjp2(password), user.passHash)) {
         return reply.code(500).send({
             success: false,

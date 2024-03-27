@@ -63,5 +63,6 @@ export enum SongError {
 
 export enum UserError {
     UserNotFound = "USER_NOT_FOUND",
-    UserIncorrectPassword = "USER_INCORRECT_PASSWORD"
+    UserIncorrectPassword = "USER_INCORRECT_PASSWORD",
+    UserIsDisabled = "USER_IS_DISABLED"
 }

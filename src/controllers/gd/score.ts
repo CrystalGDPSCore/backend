@@ -35,7 +35,7 @@ export async function updateGJUserScoreController(request: FastifyRequest<{ Body
 
     const user = await getUserById(accountID);
 
-    if (!user) {
+    if (!user || user.isDisabled) {
         return reply.send(-1);
     }
 

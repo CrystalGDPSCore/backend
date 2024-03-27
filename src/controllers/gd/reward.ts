@@ -18,7 +18,7 @@ export async function getGJChallengesController(request: FastifyRequest<{ Body: 
 
     const user = await getUserById(accountID);
 
-    if (!user) {
+    if (!user || user.isDisabled) {
         return reply.send(-1);
     }
 
@@ -73,7 +73,7 @@ export async function getGJRewardsController(request: FastifyRequest<{ Body: Get
 
     const user = await getUserById(accountID);
 
-    if (!user || !user.stats) {
+    if (!user || !user.stats || user.isDisabled) {
         return reply.send(-1);
     }
 

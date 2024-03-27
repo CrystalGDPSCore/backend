@@ -20,7 +20,7 @@ export async function getGJUserInfoController(request: FastifyRequest<{ Body: Ge
 
     const userOwn = await getUserById(accountID);
 
-    if (!userOwn) {
+    if (!userOwn || userOwn.isDisabled) {
         return reply.send(-1);
     }
 
@@ -30,7 +30,7 @@ export async function getGJUserInfoController(request: FastifyRequest<{ Body: Ge
 
     const userTarget = await getUserById(targetAccountID);
 
-    if (!userTarget || !userTarget.stats) {
+    if (!userTarget || !userTarget.stats || userTarget.isDisabled) {
         return reply.send(-1);
     }
 
@@ -106,7 +106,7 @@ export async function getGJUsersController(request: FastifyRequest<{ Body: GetGJ
         
     const userOwn = await getUserById(accountID);
 
-    if (!userOwn) {
+    if (!userOwn || userOwn.isDisabled) {
         return reply.send(-1);
     }
 
@@ -120,7 +120,7 @@ export async function getGJUsersController(request: FastifyRequest<{ Body: GetGJ
 
     const userTarget = await getUserByName(str, "insensitive");
 
-    if (!userTarget || !userTarget.stats) {
+    if (!userTarget || !userTarget.stats || userTarget.isDisabled) {
         return reply.send(-1);
     }
 
@@ -152,7 +152,7 @@ export async function requestUserAccessController(request: FastifyRequest<{ Body
 
     const user = await getUserById(accountID);
 
-    if (!user) {
+    if (!user || user.isDisabled) {
         return reply.send(-1);
     }
 

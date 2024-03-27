@@ -24,7 +24,7 @@ export async function uploadGJAccCommentController(request: FastifyRequest<{ Bod
 
     const user = await getUserById(accountID);
 
-    if (!user) {
+    if (!user || user.isDisabled) {
         return reply.send(-1);
     }
 
@@ -92,7 +92,7 @@ export async function deleteGJAccCommentController(request: FastifyRequest<{ Bod
 
     const user = await getUserById(accountID);
 
-    if (!user) {
+    if (!user || user.isDisabled) {
         return reply.send(-1);
     }
 

@@ -79,6 +79,10 @@ export async function loginGJAccountController(request: FastifyRequest<{ Body: L
         return reply.send(-11);
     }
 
+    if (user.isDisabled) {
+        return reply.send(-12);
+    }
+
     const loginAttempts = await redis.get(`${user.id}:login`);
 
     if (loginAttempts && parseInt(loginAttempts) == 5) {
@@ -95,10 +99,6 @@ export async function loginGJAccountController(request: FastifyRequest<{ Body: L
         return reply.send(-11);
     }
 
-    if (user.isDisabled) {
-        return reply.send(-12);
-    }
-
     await redis.del(`${user.id}:login`);
 
     return reply.send(`${user.id},${user.id}`);
@@ -109,7 +109,7 @@ export async function updateGJAccSettingsController(request: FastifyRequest<{ Bo
 
     const user = await getUserById(accountID);
 
-    if (!user) {
+    if (!user || user.isDisabled) {
         return reply.send(-1);
     }
 
@@ -140,7 +140,7 @@ export async function backupGJAccountNewController(request: FastifyRequest<{ Bod
 
     const user = await getUserById(accountID);
 
-    if (!user) {
+    if (!user || user.isDisabled) {
         return reply.send(-1);
     }
 
@@ -166,7 +166,7 @@ export async function syncGJAccountNewController(request: FastifyRequest<{ Body:
 
     const user = await getUserById(accountID);
 
-    if (!user) {
+    if (!user || user.isDisabled) {
         return reply.send(-1);
     }
 
