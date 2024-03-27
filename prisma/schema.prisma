@@ -22,7 +22,7 @@ model User {
   commentColor        String              @default("#ffffff")
   modRequested        Boolean             @default(false)
   isDisabled          Boolean             @default(false)
-  registerDate        DateTime            @default(now())
+  registerDate        DateTime            @default(now()) @db.Timestamptz(6)
   blockList           BlockList[]
   comments            Comment[]
   friendList          FriendList[]
@@ -57,9 +57,9 @@ model UserStats {
   glowColor        Int       @default(-1)
   hasGlow          Boolean   @default(false)
   totalSmallChests Int       @default(0)
-  lastSmallChest   DateTime?
+  lastSmallChest   DateTime? @db.Timestamptz(6)
   totalBigChests   Int       @default(0)
-  lastBigChest     DateTime?
+  lastBigChest     DateTime? @db.Timestamptz(6)
   user             User      @relation(fields: [userId], references: [id])
 }
 
@@ -69,7 +69,7 @@ model UserComment {
   comment    String
   likes      Int      @default(0)
   isSpam     Boolean  @default(false)
-  postedDate DateTime @default(now())
+  postedDate DateTime @default(now()) @db.Timestamptz(6)
   user       User     @relation(fields: [userId], references: [id])
 }
 
@@ -82,7 +82,7 @@ model Comment {
   likes       Int      @default(0)
   isSpam      Boolean  @default(false)
   isLevelList Boolean  @default(false)
-  postedDate  DateTime @default(now())
+  postedDate  DateTime @default(now()) @db.Timestamptz(6)
   user        User     @relation(fields: [userId], references: [id])
 }
 
@@ -93,7 +93,7 @@ model Message {
   subject     String
   body        String
   isNew       Boolean  @default(true)
-  postedDate  DateTime @default(now())
+  postedDate  DateTime @default(now()) @db.Timestamptz(6)
   user        User     @relation(fields: [userId], references: [id])
 }
 
@@ -110,7 +110,7 @@ model FriendRequest {
   userId      Int
   recipientId Int
   comment     String
-  postedDate  DateTime @default(now())
+  postedDate  DateTime @default(now()) @db.Timestamptz(6)
   user        User     @relation(fields: [userId], references: [id])
 }
 
@@ -136,7 +136,7 @@ model Song {
   resource   String   @unique
   link       String   @unique
   isDisabled Boolean  @default(false)
-  uploadTime DateTime @default(now())
+  uploadTime DateTime @default(now()) @db.Timestamptz(6)
   artist     Artist   @relation(fields: [artistId], references: [id])
 }
 
