@@ -17,7 +17,7 @@ import { getUserByName, getUserByEmail, createUser, updateUserSettings, getUserB
 
 import sendMail from "../../utils/sendMail";
 import { checkUserGjp2, encodeGjp2, generateUuid } from "../../utils/crypt";
-import { messageStateToEnum, friendStateToEnum, commentHistoryStateToEnum } from "../../utils/prismaEnums";
+import { messageStateToEnum, friendRequestStateToEnum, commentHistoryStateToEnum } from "../../utils/prismaEnums";
 
 import { database, server, timeLimits } from "../../config.json";
 
@@ -119,7 +119,7 @@ export async function updateGJAccSettingsController(request: FastifyRequest<{ Bo
 
     await updateUserSettings(accountID, {
         messageState: messageStateToEnum(mS),
-        friendState: friendStateToEnum(frS),
+        friendState: friendRequestStateToEnum(frS),
         commentHistoryState: commentHistoryStateToEnum(cS),
         youtube: yt,
         twitter: twitter,

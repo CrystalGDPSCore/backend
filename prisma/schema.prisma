@@ -13,7 +13,7 @@ model User {
   passHash            String
   email               String
   messageState        MessageState        @default(All)
-  friendState         FriendState         @default(All)
+  friendRequestState  FriendRequestState  @default(All)
   commentHistoryState CommentHistoryState @default(All)
   youtube             String              @default("")
   twitter             String              @default("")
@@ -168,7 +168,7 @@ enum MessageState {
   None
 }
 
-enum FriendState {
+enum FriendRequestState {
   All
   None
 }

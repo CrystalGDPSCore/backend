@@ -1,6 +1,6 @@
 import { db } from "../utils/db";
 
-export async function getFriendRequestsByRecipientId(recipientId: number) {
+export async function getFriendRequestsCount(recipientId: number) {
     const friendRequestsCount = await db.friendRequest.count({
         where: {
             recipientId

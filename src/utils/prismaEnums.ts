@@ -26,11 +26,11 @@ export function messageStateToInt(messageState: $Enums.MessageState) {
     }
 }
 
-export function friendStateToInt(friendState: $Enums.FriendState) {
+export function friendRequestStateToInt(friendState: $Enums.FriendRequestState) {
     switch (friendState) {
-        case $Enums.FriendState.All:
+        case $Enums.FriendRequestState.All:
             return 0;
-        case $Enums.FriendState.None:
+        case $Enums.FriendRequestState.None:
             return 1;
     }
 }
@@ -68,12 +68,12 @@ export function messageStateToEnum(messageState: number) {
     }
 }
 
-export function friendStateToEnum(friendState: number) {
-    switch (friendState) {
+export function friendRequestStateToEnum(friendRequestState: number) {
+    switch (friendRequestState) {
         case 1:
-            return $Enums.FriendState.None;
+            return $Enums.FriendRequestState.None;
         default:
-            return $Enums.FriendState.All
+            return $Enums.FriendRequestState.All
     }
 }
 

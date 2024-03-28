@@ -3,13 +3,13 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { GetGJUserInfoInput, GetGJUsersInput, RequestUserAccessInput } from "../../schemas/gd/user";
 
 import { getUserById, getUserByName, updateUserAccess } from "../../services/user";
-import { getNewMessagesByRecipientId } from "../../services/message";
-import { getFriendRequestsByRecipientId, friendRequestExists } from "../../services/friendRequest";
-import { getNewFriendsByUserId, friendExists } from "../../services/friendList";
+import { getNewMessagesCount } from "../../services/message";
+import { getFriendRequestsCount, friendRequestExists } from "../../services/friendRequest";
+import { getNewFriendsCount, friendExists } from "../../services/friendList";
 
 import { checkUserGjp2 } from "../../utils/crypt";
 import { gdObjToString } from "../../utils/gdForm";
-import { modLevelToInt } from "../../utils/prismaEnums";
+import { modLevelToInt, messageStateToInt, friendRequestStateToInt, commentHistoryStateToInt } from "../../utils/prismaEnums";
 
 import { IconType } from "../../helpers/enums";
 
@@ -49,9 +49,9 @@ export async function getGJUserInfoController(request: FastifyRequest<{ Body: Ge
         10: userTarget.stats.primaryColor,
         11: userTarget.stats.secondaryColor,
         51: userTarget.stats.glowColor,
-        18: userTarget.messageState,
-        19: userTarget.friendState,
-        50: userTarget.commentHistoryState,
+        18: messageStateToInt(userTarget.messageState),
+        19: friendRequestStateToInt(userTarget.friendRequestState),
+        50: commentHistoryStateToInt(userTarget.commentHistoryState),
         20: userTarget.youtube,
         44: userTarget.twitter,
         45: userTarget.twitch,
@@ -71,9 +71,9 @@ export async function getGJUserInfoController(request: FastifyRequest<{ Body: Ge
 
     if (accountID == targetAccountID) {
         userInfoObj = Object.assign(userInfoObj, {
-            38: await getNewMessagesByRecipientId(targetAccountID),
-            39: await getFriendRequestsByRecipientId(targetAccountID),
-            40: await getNewFriendsByUserId(targetAccountID)
+            38: await getNewMessagesCount(targetAccountID),
+            39: await getFriendRequestsCount(targetAccountID),
+            40: await getNewFriendsCount(targetAccountID)
         });
     }
 
