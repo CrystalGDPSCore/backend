@@ -34,7 +34,7 @@ export async function uploadGJAccCommentController(request: FastifyRequest<{ Bod
 
     const comment = safeBase64Decode(base64Comment);
 
-    if (!comment.length || comment.length > 140) {
+    if (!comment || comment.length >= 140) {
         return reply.send(-1);
     }
 
