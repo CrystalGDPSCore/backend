@@ -1,5 +1,5 @@
-# Crystal
-Just a simple GDPS core written on TypeScript.
+# Crystal (Backend)
+Just a simple GDPS core written on TypeScript, Fastify & Prisma ORM.
 
 ## How to install
 - Download ``ffmpeg`` from [gyan.dev](https://www.gyan.dev/ffmpeg/builds/#release-builds) (
