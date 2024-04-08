@@ -81,7 +81,7 @@ export async function apiAddSongController(request: FastifyRequest<{ Body: ApiAd
         name: addedSongInfo.artist.name
     });
 
-    await redis.set(`${userId}:addedSong`, 1, "EX", timeLimits.addedSong);
+    await redis.set(`${userId}:addedSong`, 1, "EX", timeLimits.addSong);
 
     return reply.send({
         success: true,

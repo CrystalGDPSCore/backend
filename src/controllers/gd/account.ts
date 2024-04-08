@@ -36,7 +36,7 @@ export async function registerGJAccountController(request: FastifyRequest<{ Body
         return reply.send(-6);
     }
 
-    if (!Number.isNaN(parseInt(userName))) {
+    if (!isNaN(parseInt(userName))) {
         return reply.send(-1);
     }
 
@@ -58,11 +58,11 @@ export async function registerGJAccountController(request: FastifyRequest<{ Body
         });
 
         await redis.hmset(`${uuid}:activation`, { userName, password, email });
-        await redis.expire(`${uuid}:activation`, timeLimits.accountActivation);
+        await redis.expire(`${uuid}:activation`, timeLimits.accountActivate);
     } else {
         await createUser({
             userName: userName,
-            passHash: encodeGjp2(password),
+            hashedPassword: encodeGjp2(password),
             email: email
         });
     }
@@ -89,9 +89,9 @@ export async function loginGJAccountController(request: FastifyRequest<{ Body: L
         return reply.send(-12);
     }
 
-    if (!checkUserGjp2(gjp2, user.passHash)) {
+    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
         if (!loginAttempts) {
-            await redis.set(`${user.id}:login`, 1, "EX", timeLimits.loginAttempts);
+            await redis.set(`${user.id}:login`, 1, "EX", timeLimits.accountLoginFailed);
         } else {
             await redis.incr(`${user.id}:login`);
         }
@@ -113,13 +113,13 @@ export async function updateGJAccSettingsController(request: FastifyRequest<{ Bo
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.passHash)) {
+    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
         return reply.send(-1);
     }
 
     await updateUserSettings(accountID, {
         messageState: messageStateToEnum(mS),
-        friendState: friendRequestStateToEnum(frS),
+        friendRequestState: friendRequestStateToEnum(frS),
         commentHistoryState: commentHistoryStateToEnum(cS),
         youtube: yt,
         twitter: twitter,
@@ -144,7 +144,7 @@ export async function backupGJAccountNewController(request: FastifyRequest<{ Bod
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.passHash)) {
+    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
         return reply.send(-1);
     }
 
@@ -170,7 +170,7 @@ export async function syncGJAccountNewController(request: FastifyRequest<{ Body:
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.passHash)) {
+    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
         return reply.send(-1);
     }
 

@@ -5,7 +5,7 @@ import { redis } from "../../utils/db";
 import { UploadGJAccCommentInput, GetGJAccountCommentsInput, DeleteGJAccCommentInput } from "../../schemas/gd/accountComment";
 
 import { getUserById } from "../../services/user";
-import { createUserComment, getUserComments, getUserCommentsCount, deleteUserComment } from "../../services/userComment";
+import { createUserComment, getUserComments, deleteUserComment } from "../../services/userComment";
 
 import { checkUserGjp2, safeBase64Decode, safeBase64Encode } from "../../utils/crypt";
 import { gdObjToString } from "../../utils/gdForm";
@@ -28,7 +28,7 @@ export async function uploadGJAccCommentController(request: FastifyRequest<{ Bod
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.passHash)) {
+    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
         return reply.send(-1);
     }
 
@@ -50,11 +50,11 @@ export async function getGJAccountCommentsController(request: FastifyRequest<{ B
 
     const userOwn = await getUserById(accountID[0]);
 
-    if (!userOwn) {
+    if (!userOwn || userOwn.isDisabled) {
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, userOwn.passHash)) {
+    if (!checkUserGjp2(gjp2, userOwn.hashedPassword)) {
         return reply.send(-1);
     }
 
@@ -64,15 +64,13 @@ export async function getGJAccountCommentsController(request: FastifyRequest<{ B
         return reply.send(-1);
     }
 
-    const comments = await getUserComments(userTarget.id, page * 10);
+    const userComments = await getUserComments(accountID[1], page * 10);
 
-    if (!comments.length) {
+    if (!userComments.length) {
         return reply.send("#0:0:0");
     }
 
-    let commentData: string[] = [];
-
-    comments.forEach(comment => {
+    const comments = userComments.map(comment => {
         const commentInfoObj = {
             2: safeBase64Encode(comment.comment),
             4: comment.likes,
@@ -81,10 +79,10 @@ export async function getGJAccountCommentsController(request: FastifyRequest<{ B
             9: getRelativeTime(comment.postedDate)
         };
 
-        commentData.push(gdObjToString(commentInfoObj, "~"));
-    });
+        return gdObjToString(commentInfoObj, "~");
+    }).join("|");
 
-    return reply.send(`${commentData.join("|")}#${getUserCommentsCount(userTarget.id)}:${page * 10}:10`);
+    return reply.send(`${comments}#${userComments.length}:${page * 10}:10`);
 }
 
 export async function deleteGJAccCommentController(request: FastifyRequest<{ Body: DeleteGJAccCommentInput }>, reply: FastifyReply) {
@@ -96,7 +94,7 @@ export async function deleteGJAccCommentController(request: FastifyRequest<{ Bod
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.passHash)) {
+    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
         return reply.send(-1);
     }
 

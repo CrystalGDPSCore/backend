@@ -2,7 +2,8 @@ import { FastifyRequest, FastifyReply } from "fastify";
 
 import { GetGJChallengesInput, GetGJRewardsInput } from "../../schemas/gd/reward";
 
-import { getUserById, getUserChestRemaining, updateUserChestCount } from "../../services/user";
+import { getUserById } from "../../services/user";
+import { getUserChestRemaining, updateUserChestCount } from "../../services/userStats";
 import { getRandomQuests } from "../../services/quest";
 
 import { getChestStuff } from "../../utils/chests";
@@ -14,48 +15,42 @@ import { Salt, ChestType } from "../../helpers/enums";
 export async function getGJChallengesController(request: FastifyRequest<{ Body: GetGJChallengesInput }>, reply: FastifyReply) {
     const { accountID, gjp2, udid, chk } = request.body;
 
-    const startTime = new Date("2024-03-01T00:00:00.000Z").getTime();
-
     const user = await getUserById(accountID);
 
     if (!user || user.isDisabled) {
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.passHash)) {
+    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
         return reply.send(-1);
     }
 
     const randomQuests = await getRandomQuests();
 
-    for (const quest of randomQuests) {
-        if (!quest) {
-            return reply.send(-1);
-        }
+    if (randomQuests.some(quest => !quest)) {
+        return reply.send(-1);
     }
 
-    const quests: string[] = [];
+    const quests = randomQuests.map(quest => {
+        const questInfo = [
+            Date.now() + quest.id,
+            questTypeToInt(quest.type),
+            quest.amount,
+            quest.reward,
+            quest.name
+        ].join(",");
 
-    randomQuests.forEach((quest, index) => {
-        quests.push(
-            [
-                Date.now() - startTime + index,
-                questTypeToInt(quest.type),
-                quest.amount,
-                quest.reward,
-                quest.name
-            ].join(",")
-        );
+        return questInfo;
     });
 
     const result = safeBase64Encode(
         xor(
             [
                 "Crystal",
-                user.id,
+                accountID,
                 xor(base64Decode(chk.slice(5)), 19847),
                 udid,
-                user.id,
+                accountID,
                 Math.round((new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60000 - Date.now()) / 1000),
                 ...quests
             ].join(":"),
@@ -65,7 +60,7 @@ export async function getGJChallengesController(request: FastifyRequest<{ Body: 
 
     const resultHash = hashGdObj(result, Salt.Challenge);
 
-    return reply.send(`CRsTl${result}|${resultHash}`);
+    return reply.send(`crstl${result}|${resultHash}`);
 }
 
 export async function getGJRewardsController(request: FastifyRequest<{ Body: GetGJRewardsInput }>, reply: FastifyReply) {
@@ -77,7 +72,7 @@ export async function getGJRewardsController(request: FastifyRequest<{ Body: Get
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.passHash)) {
+    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
         return reply.send(-1);
     }
 
@@ -86,22 +81,22 @@ export async function getGJRewardsController(request: FastifyRequest<{ Body: Get
 
     switch (rewardType) {
         case ChestType.Small:
-            if (await getUserChestRemaining(user.id, "Small") != 0) {
+            if (await getUserChestRemaining(accountID, "Small")) {
                 return reply.send(-1);
             }
 
             totalSmallChests++;
 
-            await updateUserChestCount(user.id, "Small");
+            await updateUserChestCount(accountID, "Small");
             break;
         case ChestType.Big:
-            if (await getUserChestRemaining(user.id, "Big") != 0) {
+            if (await getUserChestRemaining(accountID, "Big")) {
                 return reply.send(-1);
             }
 
             totalBigChests++;
 
-            await updateUserChestCount(user.id, "Big");
+            await updateUserChestCount(accountID, "Big");
             break;
     }
 
@@ -109,14 +104,14 @@ export async function getGJRewardsController(request: FastifyRequest<{ Body: Get
         xor(
             [
                 "Crystal",
-                user.id,
+                accountID,
                 xor(base64Decode(chk.slice(5)), 59182),
                 udid,
-                user.id,
-                await getUserChestRemaining(user.id, "Small"),
+                accountID,
+                await getUserChestRemaining(accountID, "Small"),
                 getChestStuff("Small"),
                 totalSmallChests,
-                await getUserChestRemaining(user.id, "Big"),
+                await getUserChestRemaining(accountID, "Big"),
                 getChestStuff("Big"),
                 totalBigChests,
                 rewardType
@@ -127,5 +122,5 @@ export async function getGJRewardsController(request: FastifyRequest<{ Body: Get
 
     const resultHash = hashGdObj(result, Salt.Reward);
 
-    return reply.send(`CRsTl${result}|${resultHash}`);
+    return reply.send(`crstl${result}|${resultHash}`);
 }

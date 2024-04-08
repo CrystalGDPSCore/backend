@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const songInfoObjSchema = z.object({
+const songInfoObjSchema = z.object({
     id: z.number().int(),
     name: z.string().regex(/^[ -/0-9:-@[-`{-~a-zA-Z]+$/),
     artistId: z.number().int(),
@@ -11,7 +11,7 @@ export const songInfoObjSchema = z.object({
 
 export type songInfoObj = z.infer<typeof songInfoObjSchema>;
 
-export const artistInfoObjSchema = z.object({
+const artistInfoObjSchema = z.object({
     id: z.number().int(),
     name: z.string().regex(/^[0-9a-zA-Z-_]+$/)
 });

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const getGJChallengesSchema = z.object({
-    accountID: z.coerce.number(),
+    accountID: z.coerce.number().int(),
     gjp2: z.string(),
     udid: z.string(),
     chk: z.string(),
@@ -11,11 +11,11 @@ export const getGJChallengesSchema = z.object({
 export type GetGJChallengesInput = z.infer<typeof getGJChallengesSchema>;
 
 export const getGJRewardsSchema = z.object({
-    accountID: z.coerce.number(),
+    accountID: z.coerce.number().int(),
     gjp2: z.string(),
     udid: z.string(),
     chk: z.string(),
-    rewardType: z.coerce.number(),
+    rewardType: z.coerce.number().int(),
     secret: z.string()
 });
 

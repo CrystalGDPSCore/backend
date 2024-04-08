@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const getGJUserInfoSchema = z.object({
-    targetAccountID: z.coerce.number(),
-    accountID: z.coerce.number(),
+    targetAccountID: z.coerce.number().int(),
+    accountID: z.coerce.number().int(),
     gjp2: z.string(),
     secret: z.string()
 });
@@ -10,7 +10,7 @@ export const getGJUserInfoSchema = z.object({
 export type GetGJUserInfoInput = z.infer<typeof getGJUserInfoSchema>;
 
 export const getGJUsersSchema = z.object({
-    accountID: z.coerce.number(),
+    accountID: z.coerce.number().int(),
     gjp2: z.string(),
     str: z.string(),
     secret: z.string()
@@ -19,7 +19,7 @@ export const getGJUsersSchema = z.object({
 export type GetGJUsersInput = z.infer<typeof getGJUsersSchema>;
 
 export const requestUserAccessSchema = z.object({
-    accountID: z.coerce.number(),
+    accountID: z.coerce.number().int(),
     gjp2: z.string(),
     secret: z.string()
 });

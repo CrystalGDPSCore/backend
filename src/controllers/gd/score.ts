@@ -2,7 +2,8 @@ import { FastifyRequest, FastifyReply } from "fastify";
 
 import { UpdateGJUserScoreInput } from "../../schemas/gd/score";
 
-import { getUserById, updateUserScore } from "../../services/user";
+import { getUserById } from "../../services/user";
+import { updateUserScore } from "../../services/userStats";
 
 import { checkUserGjp2 } from "../../utils/crypt";
 
@@ -39,7 +40,7 @@ export async function updateGJUserScoreController(request: FastifyRequest<{ Body
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.passHash)) {
+    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
         return reply.send(-1);
     }
 
@@ -64,7 +65,7 @@ export async function updateGJUserScoreController(request: FastifyRequest<{ Body
         primaryColor: color1,
         secondaryColor: color2,
         glowColor: color3,
-        hasGlow: Boolean(accGlow)
+        hasGlow: accGlow
     });
 
     return reply.send(accountID);

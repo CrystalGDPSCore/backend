@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const createSongSchema = z.object({
+const createSongSchema = z.object({
     name: z.string().regex(/^[ -/0-9:-@[-`{-~a-zA-Z]+$/),
     size: z.number(),
     resource: z.string().regex(/^(ng:[0-9]+)|(yt:[0-9a-zA-Z-_]+)$/),

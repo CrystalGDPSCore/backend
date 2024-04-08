@@ -46,7 +46,7 @@ export async function getAudioFromYoutube(video: string) {
 
     const title = transliterate(videoInfo.videoDetails.title);
     const artist = transliterate(videoInfo.videoDetails.author.name);
-    const artistTag = String(videoInfo.videoDetails.author.user);
+    const artistTag = videoInfo.videoDetails.author.user!;
 
     const audioStream = ytdl.downloadFromInfo(videoInfo, { quality: "140" });
 
@@ -60,7 +60,7 @@ export async function getAudioFromYoutube(video: string) {
         link: `${server.domain}/songs/${videoInfo.videoDetails.videoId}.mp3`,
         artist: {
             name: artist,
-            resource: artistTag[0] == "@" ? `yt:${artistTag.slice(1)}` : `yt:${artistTag}`
+            resource: artistTag.startsWith("@") ? `yt:${artistTag.slice(1)}` : `yt:${artistTag}`
         }
     };
 

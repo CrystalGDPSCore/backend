@@ -15,7 +15,7 @@ export function getDataFromMusicLibrary() {
 export function addDataToMusicLibrary(song: songInfoObj, artist: artistInfoObj) {
     const info = getDataFromMusicLibrary().split("|");
 
-    const version = Number(info[0]);
+    const version = parseInt(info[0]);
     const artists = info[1].split(";");
     const songs = info[2].split(";");
     const tags = info[3];

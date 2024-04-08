@@ -4,7 +4,7 @@ import { GetGJUserInfoInput, GetGJUsersInput, RequestUserAccessInput } from "../
 
 import { getUserById, getUserByName, updateUserAccess } from "../../services/user";
 import { getNewMessagesCount } from "../../services/message";
-import { getFriendRequestsCount, friendRequestExists } from "../../services/friendRequest";
+import { getNewFriendRequestsCount, friendRequestExists } from "../../services/friendRequest";
 import { getNewFriendsCount, friendExists } from "../../services/friendList";
 
 import { checkUserGjp2 } from "../../utils/crypt";
@@ -24,7 +24,7 @@ export async function getGJUserInfoController(request: FastifyRequest<{ Body: Ge
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, userOwn.passHash)) {
+    if (!checkUserGjp2(gjp2, userOwn.hashedPassword)) {
         return reply.send(-1);
     }
 
@@ -52,9 +52,9 @@ export async function getGJUserInfoController(request: FastifyRequest<{ Body: Ge
         18: messageStateToInt(userTarget.messageState),
         19: friendRequestStateToInt(userTarget.friendRequestState),
         50: commentHistoryStateToInt(userTarget.commentHistoryState),
-        20: userTarget.youtube,
-        44: userTarget.twitter,
-        45: userTarget.twitch,
+        20: userTarget.youtube ?? "",
+        44: userTarget.twitter ?? "",
+        45: userTarget.twitch ?? "",
         21: userTarget.stats.iconCube,
         22: userTarget.stats.iconShip,
         23: userTarget.stats.iconBall,
@@ -72,7 +72,7 @@ export async function getGJUserInfoController(request: FastifyRequest<{ Body: Ge
     if (accountID == targetAccountID) {
         userInfoObj = Object.assign(userInfoObj, {
             38: await getNewMessagesCount(targetAccountID),
-            39: await getFriendRequestsCount(targetAccountID),
+            39: await getNewFriendRequestsCount(targetAccountID),
             40: await getNewFriendsCount(targetAccountID)
         });
     }
@@ -81,13 +81,13 @@ export async function getGJUserInfoController(request: FastifyRequest<{ Body: Ge
         let friendStateObj = {};
 
         switch (true) {
-            case await friendExists(userOwn.id, userTarget.id):
+            case await friendExists(accountID, targetAccountID):
                 friendStateObj = { 31: 1 };
                 break;
-            case await friendRequestExists(userOwn.id, userTarget.id):
+            case await friendRequestExists(accountID, targetAccountID):
                 friendStateObj = { 31: 4 };
                 break;
-            case await friendRequestExists(userTarget.id, userOwn.id):
+            case await friendRequestExists(targetAccountID, accountID):
                 friendStateObj = { 31: 3 };
                 break;
             default:
@@ -110,7 +110,7 @@ export async function getGJUsersController(request: FastifyRequest<{ Body: GetGJ
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, userOwn.passHash)) {
+    if (!checkUserGjp2(gjp2, userOwn.hashedPassword)) {
         return reply.send(-1);
     }
 
@@ -156,11 +156,11 @@ export async function requestUserAccessController(request: FastifyRequest<{ Body
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.passHash)) {
+    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
         return reply.send(-1);
     }
 
-    if (modLevelToInt(user.modLevel)[0] == 0) {
+    if (!modLevelToInt(user.modLevel)[0]) {
         await updateUserAccess(accountID, {
             modRequested: false,
             commentColor: commentColors[user.modLevel]

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const uploadGJAccCommentSchema = z.object({
-    accountID: z.coerce.number(),
+    accountID: z.coerce.number().int(),
     gjp2: z.string(),
     comment: z.string(),
     secret: z.string()
@@ -10,18 +10,18 @@ export const uploadGJAccCommentSchema = z.object({
 export type UploadGJAccCommentInput = z.infer<typeof uploadGJAccCommentSchema>;
 
 export const getGJAccountCommentsSchema = z.object({
-    accountID: z.array(z.coerce.number()),
+    accountID: z.array(z.coerce.number().int()),
     gjp2: z.string(),
-    page: z.coerce.number(),
+    page: z.coerce.number().int(),
     secret: z.string()
 });
 
 export type GetGJAccountCommentsInput = z.infer<typeof getGJAccountCommentsSchema>;
 
 export const deleteGJAccCommentSchema = z.object({
-    accountID: z.coerce.number(),
+    accountID: z.coerce.number().int(),
     gjp2: z.string(),
-    commentID: z.coerce.number(),
+    commentID: z.coerce.number().int(),
     secret: z.string()
 });
 

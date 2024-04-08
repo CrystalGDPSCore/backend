@@ -16,11 +16,11 @@
         "Admin": "#100ced"
     },
     "timeLimits": {
-        "accountActivation": 3600,
+        "accountActivate": 3600,
         "accountBackup": 30,
         "accountSync": 30,
-        "loginAttempts": 3600,
-        "addedSong": 300,
+        "accountLoginFailed": 3600,
+        "addSong": 300,
         "uploadUserComment": 30
     },
     "chests": {

@@ -26,16 +26,6 @@ export async function getUserComments(userId: number, offset: number) {
     return userComments;
 }
 
-export async function getUserCommentsCount(userId: number) {
-    const userCommentsCount = await db.userComment.count({
-        where: {
-            userId
-        }
-    });
-
-    return userCommentsCount;
-}
-
 export async function deleteUserComment(userId: number, commentId: number) {
     const userComment = await db.userComment.delete({
         where: {

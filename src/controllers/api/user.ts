@@ -29,7 +29,7 @@ export async function apiLoginUserController(request: FastifyRequest<{ Body: Api
         });
     }
 
-    if (!checkUserGjp2(createGjp2(password), user.passHash)) {
+    if (!checkUserGjp2(createGjp2(password), user.hashedPassword)) {
         return reply.code(500).send({
             success: false,
             code: UserError.UserIncorrectPassword,

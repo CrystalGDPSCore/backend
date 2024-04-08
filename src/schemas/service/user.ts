@@ -1,23 +1,23 @@
 import { z } from "zod";
 
-export const createUserSchema = z.object({
+const createUserSchema = z.object({
     userName: z.string().regex(/^[0-9a-zA-Z]{3,15}$/),
-    passHash: z.string().regex(/^\$2(a|b|x|y)\$[0-9]{1,2}\$[a-zA-Z.0-9\/+]{22}={0,2}[A-Za-z0-9+\/.+]{31}={0,2}$/),
+    hashedPassword: z.string().regex(/^\$2(a|b|x|y)\$[0-9]{1,2}\$[a-zA-Z.0-9\/+]{22}={0,2}[A-Za-z0-9+\/.+]{31}={0,2}$/),
     email: z.string().email()
 });
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 
-export const updateUserAccessSchema = z.object({
+const updateUserAccessSchema = z.object({
     modRequested: z.boolean(),
     commentColor: z.string().regex(/^#[A-Fa-f0-9]{6}$/)
 });
 
 export type UpdateUserAccessInput = z.infer<typeof updateUserAccessSchema>;
 
-export const updateUserSettingsSchema = z.object({
+const updateUserSettingsSchema = z.object({
     messageState: z.enum(["All", "Friends", "None"]),
-    friendState: z.enum(["All", "None"]), 
+    friendRequestState: z.enum(["All", "None"]), 
     commentHistoryState: z.enum(["All", "Friends", "None"]),
     youtube: z.string().regex(/^[0-9a-zA-Z-_]+$/),
     twitter: z.string().regex(/^[0-9a-zA-Z-_]+$/),
@@ -26,7 +26,7 @@ export const updateUserSettingsSchema = z.object({
 
 export type UpdateUserSettingsInput = z.infer<typeof updateUserSettingsSchema>;
 
-export const updateUserScoreSchema = z.object({
+const updateUserScoreSchema = z.object({
     stars: z.number().int(),
     moons: z.number().int(),
     secretCoins: z.number().int(),

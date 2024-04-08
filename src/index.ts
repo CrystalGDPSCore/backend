@@ -15,6 +15,7 @@ import apiUserRoutes from "./routes/api/user";
 import gdAccountRoutes from "./routes/gd/account";
 import gdAccountCommentRoutes from "./routes/gd/accountComment";
 import gdCustomContentRoutes from "./routes/gd/customContent";
+import gdFriendRequestRoutes from "./routes/gd/friendRequest";
 import gdRewardRoutes from "./routes/gd/reward";
 import gdScoreRoutes from "./routes/gd/score";
 import gdUserRoutes from "./routes/gd/user";
@@ -32,7 +33,7 @@ async function main() {
     fastify.register(fastifyFormbody);
 
     fastify.register(fastifyJwt, {
-        secret: process.env.JWT_SECRET as string
+        secret: process.env.JWT_SECRET!
     });
 
     fastify.register(fastifyStatic, {
@@ -45,11 +46,26 @@ async function main() {
         decorateReply: false
     });
 
-    for (const apiRoute of [apiSongRoutes, apiUserRoutes]) {
+    const apiRoutes = [
+        apiSongRoutes,
+        apiUserRoutes
+    ];
+
+    for (const apiRoute of apiRoutes) {
         fastify.register(apiRoute, { prefix: "api" });
     }
 
-    for (const gdRoute of [gdAccountRoutes, gdAccountCommentRoutes, gdCustomContentRoutes, gdRewardRoutes, gdScoreRoutes, gdUserRoutes]) {
+    const gdRoutes = [
+        gdAccountRoutes,
+        gdAccountCommentRoutes,
+        gdCustomContentRoutes,
+        gdFriendRequestRoutes,
+        gdRewardRoutes,
+        gdScoreRoutes,
+        gdUserRoutes
+    ];
+
+    for (const gdRoute of gdRoutes) {
         fastify.register(gdRoute, { prefix: database.path });
     }
 

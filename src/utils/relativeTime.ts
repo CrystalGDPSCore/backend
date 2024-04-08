@@ -23,4 +23,6 @@ export function getRelativeTime(date: Date) {
             return time;
         }
     }
+
+    return "undefined seconds";
 }

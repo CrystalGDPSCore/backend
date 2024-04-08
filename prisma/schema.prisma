@@ -2,34 +2,41 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator json {
+  provider = "prisma-json-types-generator"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id                  Int                 @id @default(autoincrement())
+  id                  Int                 @id @unique @default(autoincrement())
   userName            String              @unique
-  passHash            String
+  hashedPassword      String
   email               String
   messageState        MessageState        @default(All)
   friendRequestState  FriendRequestState  @default(All)
   commentHistoryState CommentHistoryState @default(All)
-  youtube             String              @default("")
-  twitter             String              @default("")
-  twitch              String              @default("")
+  youtube             String?
+  twitter             String?
+  twitch              String?
   modLevel            ModLevel            @default(None)
-  commentColor        String              @default("#ffffff")
+  /// HEX format without "#"
+  commentColor        String?
   modRequested        Boolean             @default(false)
   isDisabled          Boolean             @default(false)
   registerDate        DateTime            @default(now()) @db.Timestamptz(6)
-  blockList           BlockList[]
+  blocks              BlockList?
   comments            Comment[]
-  friendList          FriendList[]
+  friends             FriendList?
   friendRequests      FriendRequest[]
   messages            Message[]
   userComments        UserComment[]
   stats               UserStats?
+
+  @@map("users")
 }
 
 model UserStats {
@@ -61,6 +68,8 @@ model UserStats {
   totalBigChests   Int       @default(0)
   lastBigChest     DateTime? @db.Timestamptz(6)
   user             User      @relation(fields: [userId], references: [id])
+
+  @@map("userStats")
 }
 
 model UserComment {
@@ -71,6 +80,8 @@ model UserComment {
   isSpam     Boolean  @default(false)
   postedDate DateTime @default(now()) @db.Timestamptz(6)
   user       User     @relation(fields: [userId], references: [id])
+
+  @@map("userComments")
 }
 
 model Comment {
@@ -84,6 +95,8 @@ model Comment {
   isLevelList Boolean  @default(false)
   postedDate  DateTime @default(now()) @db.Timestamptz(6)
   user        User     @relation(fields: [userId], references: [id])
+
+  @@map("comments")
 }
 
 model Message {
@@ -93,32 +106,39 @@ model Message {
   subject     String
   body        String
   isNew       Boolean  @default(true)
-  postedDate  DateTime @default(now()) @db.Timestamptz(6)
+  sentDate    DateTime @default(now()) @db.Timestamptz(6)
   user        User     @relation(fields: [userId], references: [id])
-}
 
-model FriendList {
-  id       Int     @id @default(autoincrement())
-  userId   Int
-  friendId Int
-  isNew    Boolean @default(true)
-  user     User    @relation(fields: [userId], references: [id])
+  @@map("messages")
 }
 
 model FriendRequest {
   id          Int      @id @default(autoincrement())
   userId      Int
   recipientId Int
-  comment     String   @default("")
-  postedDate  DateTime @default(now()) @db.Timestamptz(6)
+  comment     String?
+  isNew       Boolean  @default(true)
+  sentDate    DateTime @default(now()) @db.Timestamptz(6)
   user        User     @relation(fields: [userId], references: [id])
+
+  @@map("friendRequests")
+}
+
+model FriendList {
+  userId  Int    @id @unique
+  /// [FriendsInfo]
+  friends Json[]
+  user    User   @relation(fields: [userId], references: [id])
+
+  @@map("friendList")
 }
 
 model BlockList {
-  id            Int  @id @default(autoincrement())
-  userId        Int
-  blockedUserId Int
-  user          User @relation(fields: [userId], references: [id])
+  userId   Int   @id @unique
+  blockIds Int[]
+  user     User  @relation(fields: [userId], references: [id])
+
+  @@map("blockList")
 }
 
 model Artist {
@@ -126,6 +146,8 @@ model Artist {
   name     String
   resource String @unique
   songs    Song[]
+
+  @@map("artists")
 }
 
 model Song {
@@ -138,6 +160,8 @@ model Song {
   isDisabled Boolean  @default(false)
   uploadTime DateTime @default(now()) @db.Timestamptz(6)
   artist     Artist   @relation(fields: [artistId], references: [id])
+
+  @@map("songs")
 }
 
 model Quest {
@@ -146,6 +170,8 @@ model Quest {
   amount Int
   reward Int
   name   String
+
+  @@map("quests")
 }
 
 enum QuestType {

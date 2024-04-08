@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const getGJSongInfoSchema = z.object({
-    songID: z.coerce.number(),
+    songID: z.coerce.number().int(),
     secret: z.string()
 });
 
