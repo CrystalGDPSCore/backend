@@ -4,12 +4,13 @@ import { GetGJUserInfoInput, GetGJUsersInput, RequestUserAccessInput } from "../
 
 import { getUserById, getUserByName, updateUserAccess } from "../../services/user";
 import { getNewMessagesCount } from "../../services/message";
-import { getNewFriendRequestsCount, friendRequestExists } from "../../services/friendRequest";
+import { getNewFriendRequestsCount, friendRequestExists, getFriendRequest } from "../../services/friendRequest";
 import { getNewFriendsCount, friendExists } from "../../services/friendList";
 
-import { checkUserGjp2 } from "../../utils/crypt";
+import { checkUserGjp2, safeBase64Encode } from "../../utils/crypt";
 import { gdObjToString } from "../../utils/gdForm";
 import { modLevelToInt, messageStateToInt, friendRequestStateToInt, commentHistoryStateToInt } from "../../utils/prismaEnums";
+import { getRelativeTime } from "../../utils/relativeTime";
 
 import { IconType } from "../../helpers/enums";
 
@@ -88,7 +89,14 @@ export async function getGJUserInfoController(request: FastifyRequest<{ Body: Ge
                 friendStateObj = { 31: 4 };
                 break;
             case await friendRequestExists(targetAccountID, accountID):
-                friendStateObj = { 31: 3 };
+                const friendRequest = (await getFriendRequest(targetAccountID, accountID))!;
+
+                friendStateObj = {
+                    31: 3,
+                    32: friendRequest.id,
+                    35: safeBase64Encode(friendRequest.comment ?? ""),
+                    37: getRelativeTime(friendRequest.sentDate)
+                };
                 break;
             default:
                 friendStateObj = { 31: 0 };

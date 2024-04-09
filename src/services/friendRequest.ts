@@ -56,6 +56,17 @@ export async function getFriendRequests(userId: number, input: GetFriendRequests
     return friendRequests;
 }
 
+export async function getFriendRequest(userId: number, recipientId: number) {
+    const friendRequest = await db.friendRequest.findFirst({
+        where: {
+            userId,
+            recipientId
+        }
+    });
+
+    return friendRequest;
+}
+
 export async function readFriendRequest(recipientId: number, requestId: number) {
     const friendRequest = await db.friendRequest.update({
         where: {
