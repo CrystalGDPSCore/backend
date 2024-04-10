@@ -8,7 +8,7 @@ export function modLevelToInt(modLevel: $Enums.ModLevel) { // mod badge, request
             return [1, 1];
         case $Enums.ModLevel.ElderMod:
             return [2, 2];
-        case $Enums.ModLevel.ListMod:
+        case $Enums.ModLevel.LeaderboardMod:
             return [3, 1];
         case $Enums.ModLevel.Admin:
             return [2, 2];

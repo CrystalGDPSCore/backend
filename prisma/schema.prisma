@@ -184,7 +184,7 @@ enum ModLevel {
   None
   Mod
   ElderMod
-  ListMod
+  LeaderboardMod
   Admin
 }
 

@@ -12,7 +12,7 @@
         "None": "#ffffff",
         "Mod": "#FFD700",
         "ElderMod": "#8f6ed2",
-        "ListMod": "#048af5",
+        "LeaderboardMod": "#048af5",
         "Admin": "#100ced"
     },
     "timeLimits": {
