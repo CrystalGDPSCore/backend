@@ -14,6 +14,7 @@ import apiUserRoutes from "./routes/api/user";
 
 import gdAccountRoutes from "./routes/gd/account";
 import gdAccountCommentRoutes from "./routes/gd/accountComment";
+import gdBlockRoutes from "./routes/gd/block";
 import gdCustomContentRoutes from "./routes/gd/customContent";
 import gdFriendRequestRoutes from "./routes/gd/friendRequest";
 import gdRewardRoutes from "./routes/gd/reward";
@@ -58,6 +59,7 @@ async function main() {
     const gdRoutes = [
         gdAccountRoutes,
         gdAccountCommentRoutes,
+        gdBlockRoutes,
         gdCustomContentRoutes,
         gdFriendRequestRoutes,
         gdRewardRoutes,

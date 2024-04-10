@@ -95,7 +95,7 @@ export async function addFriendFromRequest(input: AddFriendFromRequestInput) {
         }
     });
 
-    pairs.map(async ([userId, friendId]) => {
+    pairs.forEach(async ([userId, friendId]) => {
         await db.friendList.upsert({
             where: {
                 userId

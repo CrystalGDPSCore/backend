@@ -50,11 +50,5 @@ export async function friendExists(userId: number, friendId: number) {
         return false;
     }
 
-    const friend = friendList.friends.filter(friend => friend.id == friendId);
-
-    if (!friend.length) {
-        return false;
-    }
-
-    return true;
+    return friendList.friends.some(friend => friend.id == friendId);
 }

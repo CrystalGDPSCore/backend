@@ -6,6 +6,7 @@ import { getUserById, getUserByName, updateUserAccess } from "../../services/use
 import { getNewMessagesCount } from "../../services/message";
 import { getNewFriendRequestsCount, friendRequestExists, getFriendRequest } from "../../services/friendRequest";
 import { getNewFriendsCount, friendExists } from "../../services/friendList";
+import { blockedExists } from "../../services/blockList";
 
 import { checkUserGjp2, safeBase64Encode } from "../../utils/crypt";
 import { gdObjToString } from "../../utils/gdForm";
@@ -32,6 +33,10 @@ export async function getGJUserInfoController(request: FastifyRequest<{ Body: Ge
     const userTarget = await getUserById(targetAccountID);
 
     if (!userTarget || !userTarget.stats || userTarget.isDisabled) {
+        return reply.send(-1);
+    }
+
+    if (await blockedExists(accountID, targetAccountID) || await blockedExists(targetAccountID, accountID)) {
         return reply.send(-1);
     }
 

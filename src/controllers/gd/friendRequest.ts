@@ -61,7 +61,7 @@ export async function uploadFriendRequestController(request: FastifyRequest<{ Bo
         return reply.send(-1);
     }
 
-    if (await blockedExists(accountID, toAccountID)) {
+    if (await blockedExists(accountID, toAccountID) || await blockedExists(toAccountID, accountID)) {
         return reply.send(-1);
     }
 
