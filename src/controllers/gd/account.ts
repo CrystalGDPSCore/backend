@@ -148,7 +148,7 @@ export async function backupGJAccountNewController(request: FastifyRequest<{ Bod
         return reply.send(-1);
     }
 
-    writeFileSync(path.join(__dirname, "../../../", "data", "account", `${accountID}.acc`), `${saveData};${gameVersion};${binaryVersion};a;a`);
+    writeFileSync(path.join(__dirname, "../../../", "data", "accounts", `${accountID}.acc`), `${saveData};${gameVersion};${binaryVersion};a;a`);
 
     await redis.set(`${accountID}:backup`, 1, "EX", timeLimits.accountBackup);
 
@@ -175,7 +175,7 @@ export async function syncGJAccountNewController(request: FastifyRequest<{ Body:
     }
 
     try {
-        const saveData = readFileSync(path.join(__dirname, "../../../", "data", "account", `${accountID}.acc`), "utf-8");
+        const saveData = readFileSync(path.join(__dirname, "../../../", "data", "accounts", `${accountID}.acc`), "utf-8");
 
         await redis.set(`${accountID}:sync`, 1, "EX", timeLimits.accountSync);
 

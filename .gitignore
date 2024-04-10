@@ -3,5 +3,5 @@
 node_modules
 ffmpeg
 
-data/account/*.acc
+data/accounts/*.acc
 data/songs/*.mp3
