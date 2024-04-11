@@ -118,7 +118,7 @@ export async function deleteFriend(userId: number, friendId: number) {
         });
 
         if (friendList && friendList.friends.some(friend => friend.id == secondId)) {
-            await db.friendList.update({
+            const updatedFriendList = await db.friendList.update({
                 where: {
                     userId: firstId
                 },
@@ -128,6 +128,14 @@ export async function deleteFriend(userId: number, friendId: number) {
                     }
                 }
             });
+
+            if (!updatedFriendList.friends.length) {
+                await db.friendList.delete({
+                    where: {
+                        userId: firstId
+                    }
+                });
+            }
         }
     });
 }

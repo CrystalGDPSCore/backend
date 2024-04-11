@@ -82,7 +82,7 @@ export async function unblockUser(userId: number, blockedId: number) {
     });
 
     if (blockList && blockList.blockIds.includes(blockedId)) {
-        await db.blockList.update({
+        const updatedBlockList = await db.blockList.update({
             where: {
                 userId
             },
@@ -92,6 +92,14 @@ export async function unblockUser(userId: number, blockedId: number) {
                 }
             }
         });
+
+        if (!updatedBlockList.blockIds.length) {
+            await db.blockList.delete({
+                where: {
+                    userId
+                }
+            });
+        }
     }
 }
 
