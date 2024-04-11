@@ -47,7 +47,7 @@ export async function createSong(input: CreateSongInput) {
 }
 
 export async function getSongByResource(resource: string) {
-    const song = await db.song.findFirst({
+    const song = await db.song.findUnique({
         where: {
             resource
         },

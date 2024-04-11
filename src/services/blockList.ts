@@ -1,7 +1,7 @@
 import { db } from "../utils/db";
 
 export async function blockedExists(userId: number, blockedId: number) {
-    const blockList = await db.blockList.findFirst({
+    const blockList = await db.blockList.findUnique({
         where: {
             userId
         },
@@ -31,7 +31,7 @@ export async function blockUser(userId: number, blockedId: number) {
             }
         });
 
-        const friendList = await db.friendList.findFirst({
+        const friendList = await db.friendList.findUnique({
             where: {
                 userId: firstId
             },
@@ -72,7 +72,7 @@ export async function blockUser(userId: number, blockedId: number) {
 }
 
 export async function unblockUser(userId: number, blockedId: number) {
-    const blockList = await db.blockList.findFirst({
+    const blockList = await db.blockList.findUnique({
         where: {
             userId
         },
