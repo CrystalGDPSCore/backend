@@ -100,3 +100,34 @@ export async function updateFriendList(userId: number) {
 
     return updatedFriendList;
 }
+
+export async function deleteFriend(userId: number, friendId: number) {
+    const pairs = [
+        [userId, friendId],
+        [friendId, userId]
+    ];
+
+    pairs.forEach(async ([firstId, secondId]) => {
+        const friendList = await db.friendList.findUnique({
+            where: {
+                userId: firstId
+            },
+            select: {
+                friends: true
+            }
+        });
+
+        if (friendList && friendList.friends.some(friend => friend.id == secondId)) {
+            await db.friendList.update({
+                where: {
+                    userId: firstId
+                },
+                data: {
+                    friends: {
+                        set: friendList.friends.filter(friend => friend.id != secondId)
+                    }
+                }
+            });
+        }
+    });
+}

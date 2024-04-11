@@ -1,9 +1,9 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 
-import { GetGJUserListInput } from "../../schemas/gd/relationship";
+import { GetGJUserListInput, RemoveGJFriendInput } from "../../schemas/gd/relationship";
 
 import { getUserById, getUsers } from "../../services/user";
-import { getFriendList, updateFriendList } from "../../services/friendList";
+import { getFriendList, updateFriendList, deleteFriend } from "../../services/friendList";
 import { getBlockList } from "../../services/blockList";
 
 import { checkUserGjp2 } from "../../utils/crypt";
@@ -79,4 +79,32 @@ export async function getGJUserListController(request: FastifyRequest<{ Body: Ge
     }).join("|");
 
     return reply.send(list);
+}
+
+export async function removeGJFriendController(request: FastifyRequest<{ Body: RemoveGJFriendInput }>, reply: FastifyReply) {
+    const { accountID, gjp2, targetAccountID } = request.body;
+
+    if (accountID == targetAccountID) {
+        return reply.send(-1);
+    }
+
+    const userOwn = await getUserById(accountID);
+
+    if (!userOwn || userOwn.isDisabled) {
+        return reply.send(-1);
+    }
+
+    if (!checkUserGjp2(gjp2, userOwn.hashedPassword)) {
+        return reply.send(-1);
+    }
+
+    const userTarget = await getUserById(targetAccountID);
+
+    if (!userTarget || userTarget.isDisabled) {
+        return reply.send(-1);
+    }
+
+    await deleteFriend(accountID, targetAccountID);
+
+    return reply.send(1);
 }
