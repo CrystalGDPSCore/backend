@@ -49,6 +49,11 @@ export enum ShardType {
     SoulShard
 }
 
+export enum UserListType {
+    FriendList,
+    BlockedList
+}
+
 export enum QueryMode {
     default,
     insensitive

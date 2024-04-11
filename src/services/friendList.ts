@@ -52,3 +52,51 @@ export async function friendExists(userId: number, friendId: number) {
 
     return friendList.friends.some(friend => friend.id == friendId);
 }
+
+export async function getFriendList(userId: number) {
+    const friendList = await db.friendList.findUnique({
+        where: {
+            userId
+        },
+        select: {
+            friends: true
+        }
+    });
+
+    if (!friendList) {
+        return []; 
+    }
+
+    return friendList.friends;
+}
+
+export async function updateFriendList(userId: number) {
+    const friendList = await db.friendList.findUnique({
+        where: {
+            userId
+        },
+        select: {
+            friends: true
+        }
+    });
+
+    const updatedFriendList = await db.friendList.update({
+        where: {
+            userId
+        },
+        data: {
+            friends: {
+                set: friendList!.friends.map(friend => {
+                    const friendInfoObj = {
+                        id: friend.id,
+                        isNew: false
+                    };
+
+                    return friendInfoObj;
+                })
+            }
+        }
+    });
+
+    return updatedFriendList;
+}

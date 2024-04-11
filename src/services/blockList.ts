@@ -94,3 +94,20 @@ export async function unblockUser(userId: number, blockedId: number) {
         });
     }
 }
+
+export async function getBlockList(userId: number) {
+    const blockList = await db.blockList.findUnique({
+        where: {
+            userId
+        },
+        select: {
+            blockIds: true
+        }
+    });
+
+    if (!blockList) {
+        return [];
+    }
+
+    return blockList.blockIds;
+}
