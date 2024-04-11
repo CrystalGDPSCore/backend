@@ -31,7 +31,7 @@ export async function blockUser(userId: number, blockedId: number) {
             }
         });
 
-        const userFriendList = await db.friendList.findFirst({
+        const friendList = await db.friendList.findFirst({
             where: {
                 userId: firstId
             },
@@ -40,14 +40,14 @@ export async function blockUser(userId: number, blockedId: number) {
             }
         });
     
-        if (userFriendList && userFriendList.friends.some(friend => friend.id == secondId)) {
+        if (friendList && friendList.friends.some(friend => friend.id == secondId)) {
             await db.friendList.update({
                 where: {
                     userId: firstId
                 },
                 data: {
                     friends: {
-                        set: userFriendList.friends.filter(friend => friend.id != secondId)
+                        set: friendList.friends.filter(friend => friend.id != secondId)
                     }
                 }
             });
