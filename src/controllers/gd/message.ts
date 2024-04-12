@@ -7,7 +7,7 @@ import { UploadGJMessageInput, GetGJMessagesInput } from "../../schemas/gd/messa
 import { getUserById, getUsers } from "../../services/user";
 import { blockedExists } from "../../services/blockList";
 import { friendExists } from "../../services/friendList";
-import { createMessage, getMessages } from "../../services/message";
+import { createMessage, getMessages, updateMessages } from "../../services/message";
 
 import { checkUserGjp2, safeBase64Decode, safeBase64Encode, base64Decode, xor } from "../../utils/crypt";
 import { getRelativeTime } from "../../utils/relativeTime";
@@ -124,6 +124,10 @@ export async function getGJMessagesController(request: FastifyRequest<{ Body: Ge
 
         return gdObjToString(messageInfoObj);
     }).join("|");
+
+    if (!getSent && userMessages.some(message => message.isNew)) {
+        await updateMessages(accountID, userMessages.filter(message => message.isNew).map(message => message.id));
+    }
 
     return reply.send(`${messages}#${userMessages.length}:${page * 10}:10`);
 }

@@ -42,3 +42,19 @@ export async function getMessages(userId: number, input: GetMessagesInput) {
 
     return messages;
 }
+
+export async function updateMessages(recipientId: number, messageIds: Array<number>) {
+    const updatedMessages = await db.message.updateMany({
+        where: {
+            id: {
+                in: messageIds
+            },
+            recipientId
+        },
+        data: {
+            isNew: false
+        }
+    });
+
+    return updatedMessages;
+}
