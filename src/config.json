@@ -21,7 +21,8 @@
         "accountSync": 30,
         "accountLoginFailed": 3600,
         "addSong": 300,
-        "uploadUserComment": 30
+        "uploadUserComment": 5,
+        "uploadMessage": 5
     },
     "chests": {
         "small": {
