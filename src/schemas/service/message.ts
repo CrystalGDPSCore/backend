@@ -7,3 +7,10 @@ const createMessageSchema = z.object({
 });
 
 export type CreateMessageInput = z.infer<typeof createMessageSchema>;
+
+const getMessagesSchema = z.object({
+    offset: z.number().int(),
+    isSent: z.boolean()
+});
+
+export type GetMessagesInput = z.infer<typeof getMessagesSchema>;
