@@ -31,6 +31,13 @@ export async function blockUser(userId: number, blockedId: number) {
             }
         });
 
+        await db.message.deleteMany({
+            where: {
+                userId: firstId,
+                recipientId: secondId
+            }
+        });
+
         const friendList = await db.friendList.findUnique({
             where: {
                 userId: firstId
