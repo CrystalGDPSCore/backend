@@ -67,7 +67,7 @@ export async function uploadFriendRequestController(request: FastifyRequest<{ Bo
 
     const comment = safeBase64Decode(base64Comment);
 
-    if (comment.length >= 140) {
+    if (comment.length > 140) {
         return reply.send(-1);
     }
 
