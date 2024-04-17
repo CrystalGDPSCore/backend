@@ -122,7 +122,7 @@ export async function addFriendFromRequest(input: AddFriendFromRequestInput) {
     });
 }
 
-export async function deleteFriendRequests(userIds: number[], recipientId: number) {
+export async function deleteFriendRequests(userIds: Array<number>, recipientId: number) {
     const { count: friendRequestsCount } = await db.friendRequest.deleteMany({
         where: {
             userId: {

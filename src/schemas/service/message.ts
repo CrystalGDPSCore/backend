@@ -14,3 +14,10 @@ const getMessagesSchema = z.object({
 });
 
 export type GetMessagesInput = z.infer<typeof getMessagesSchema>;
+
+const deleteMessagesSchema = z.object({
+    messageIds: z.array(z.number().int()),
+    isSent: z.boolean()
+});
+
+export type DeleteMessagesInput = z.infer<typeof deleteMessagesSchema>;

@@ -2,11 +2,11 @@ import { FastifyInstance } from "fastify";
 
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 
-import { uploadGJMessageController, getGJMessagesController, downloadGJMessageController } from "../../controllers/gd/message";
+import { uploadGJMessageController, getGJMessagesController, downloadGJMessageController, deleteGJMessagesController } from "../../controllers/gd/message";
 
 import checkSecret from "../../middlewares/checkSecret";
 
-import { uploadGJMessageSchema, getGJMessagesSchema, downloadGJMessageSchema } from "../../schemas/gd/message";
+import { uploadGJMessageSchema, getGJMessagesSchema, downloadGJMessageSchema, deleteGJMessagesSchema } from "../../schemas/gd/message";
 
 import { Secret } from "../../helpers/enums";
 
@@ -31,4 +31,11 @@ export default async function gdMessageRoutes(fastify: FastifyInstance) {
             body: downloadGJMessageSchema
         }
     }, downloadGJMessageController);
+
+    fastify.withTypeProvider<ZodTypeProvider>().post("/deleteGJMessages20.php", {
+        preHandler: checkSecret(Secret.Common),
+        schema: {
+            body: deleteGJMessagesSchema
+        }
+    }, deleteGJMessagesController);
 }

@@ -2,12 +2,12 @@ import { FastifyRequest, FastifyReply } from "fastify";
 
 import { redis } from "../../utils/db";
 
-import { UploadGJMessageInput, GetGJMessagesInput, DownloadGJMessageInput } from "../../schemas/gd/message";
+import { UploadGJMessageInput, GetGJMessagesInput, DownloadGJMessageInput, DeleteGJMessagesInput } from "../../schemas/gd/message";
 
 import { getUserById, getUsers } from "../../services/user";
 import { blockedExists } from "../../services/blockList";
 import { friendExists } from "../../services/friendList";
-import { createMessage, getMessages, updateMessage, getMessage } from "../../services/message";
+import { createMessage, getMessages, updateMessage, getMessage, deleteMessages } from "../../services/message";
 
 import { checkUserGjp2, safeBase64Decode, safeBase64Encode, base64Decode, xor } from "../../utils/crypt";
 import { getRelativeTime } from "../../utils/relativeTime";
@@ -128,7 +128,9 @@ export async function getGJMessagesController(request: FastifyRequest<{ Body: Ge
 }
 
 export async function downloadGJMessageController(request: FastifyRequest<{ Body: DownloadGJMessageInput }>, reply: FastifyReply) {
-    const { accountID, gjp2, messageID } = request.body;
+    const { accountID, gjp2, isSender, messageID } = request.body;
+
+    console.log(request.body);
 
     const userOwn = await getUserById(accountID);
 
@@ -140,13 +142,13 @@ export async function downloadGJMessageController(request: FastifyRequest<{ Body
         return reply.send(-1);
     }
 
+    const userType = isSender ? "recipientId" : "userId";
+
     const message = await getMessage(messageID);
 
     if (!message) {
         return reply.send(-1);
     }
-
-    const userType = message.userId == accountID ? "recipientId" : "userId";
 
     const userTarget = await getUserById(message[userType]);
 
@@ -154,7 +156,7 @@ export async function downloadGJMessageController(request: FastifyRequest<{ Body
         return reply.send(-1);
     }
 
-    if (message.isNew && message.recipientId == accountID) {
+    if (message.isNew && !isSender) {
         await updateMessage(message.recipientId, messageID);
     }
 
@@ -167,8 +169,31 @@ export async function downloadGJMessageController(request: FastifyRequest<{ Body
         6: userTarget.userName,
         7: getRelativeTime(message.sentDate),
         8: message.isNew ? 0 : 1,
-        9: message.userId == accountID ? 1 : 0
+        9: isSender ? 1 : 0
     };
 
     return reply.send(gdObjToString(messageInfoObj));
+}
+
+export async function deleteGJMessagesController(request: FastifyRequest<{ Body: DeleteGJMessagesInput }>, reply: FastifyReply) {
+    const { accountID, gjp2, isSender, messageID, messages } = request.body;
+
+    const user = await getUserById(accountID);
+
+    if (!user || user.isDisabled) {
+        return reply.send(-1);
+    }
+
+    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
+        return reply.send(-1);
+    }
+
+    const messageList = messages.length ? messages : [messageID];
+
+    await deleteMessages(accountID, {
+        messageIds: messageList,
+        isSent: isSender
+    });
+
+    return reply.send(1);
 }

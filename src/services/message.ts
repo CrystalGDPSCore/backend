@@ -1,6 +1,6 @@
 import { db } from "../utils/db";
 
-import { CreateMessageInput, GetMessagesInput } from "../schemas/service/message";
+import { CreateMessageInput, GetMessagesInput, DeleteMessagesInput } from "../schemas/service/message";
 
 export async function getNewMessagesCount(recipientId: number) {
     const newMessagesCount = await db.message.count({
@@ -65,4 +65,19 @@ export async function updateMessage(recipientId: number, messageId: number) {
     });
 
     return updatedMessage;
+}
+
+export async function deleteMessages(userId: number, input: DeleteMessagesInput) {
+    const userType = input.isSent ? "userId" : "recipientId";
+
+    const { count: messagesCount } = await db.message.deleteMany({
+        where: {
+            id: {
+                in: input.messageIds
+            },
+            [userType]: userId
+        }
+    });
+
+    return messagesCount;
 }
