@@ -26,6 +26,16 @@ export async function createMessage(userId: number, input: CreateMessageInput) {
     return message;
 }
 
+export async function getMessage(messageId: number) {
+    const message = await db.message.findFirst({
+        where: {
+            id: messageId
+        }
+    });
+
+    return message;
+}
+
 export async function getMessages(userId: number, input: GetMessagesInput) {
     const userType = input.isSent ? "userId" : "recipientId";
 
@@ -43,12 +53,10 @@ export async function getMessages(userId: number, input: GetMessagesInput) {
     return messages;
 }
 
-export async function updateMessages(recipientId: number, messageIds: Array<number>) {
-    const updatedMessages = await db.message.updateMany({
+export async function updateMessage(recipientId: number, messageId: number) {
+    const updatedMessage = await db.message.update({
         where: {
-            id: {
-                in: messageIds
-            },
+            id: messageId,
             recipientId
         },
         data: {
@@ -56,5 +64,5 @@ export async function updateMessages(recipientId: number, messageIds: Array<numb
         }
     });
 
-    return updatedMessages;
+    return updatedMessage;
 }

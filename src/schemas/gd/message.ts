@@ -20,3 +20,12 @@ export const getGJMessagesSchema = z.object({
 });
 
 export type GetGJMessagesInput = z.infer<typeof getGJMessagesSchema>;
+
+export const downloadGJMessageSchema = z.object({
+    accountID: z.coerce.number().int(),
+    gjp2: z.string(),
+    messageID: z.coerce.number().int(),
+    secret: z.string()
+});
+
+export type DownloadGJMessageInput = z.infer<typeof downloadGJMessageSchema>;
