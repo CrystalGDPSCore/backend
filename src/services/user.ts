@@ -102,3 +102,18 @@ export async function updateUserSettings(userId: number, input: UpdateUserSettin
 
     return user;
 }
+
+export async function getUserRank(starsCount: number) {
+    const userRank = await db.user.count({
+        where: {
+            isDisabled: false,
+            stats: {
+                stars: {
+                    gt: starsCount
+                }
+            }
+        }
+    });
+
+    return userRank + 1;
+}

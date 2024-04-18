@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 
 import { GetGJUserInfoInput, GetGJUsersInput, RequestUserAccessInput } from "../../schemas/gd/user";
 
-import { getUserById, getUserByName, updateUserAccess } from "../../services/user";
+import { getUserById, getUserByName, updateUserAccess, getUserRank } from "../../services/user";
 import { getNewMessagesCount } from "../../services/message";
 import { getNewFriendRequestsCount, friendRequestExists, getFriendRequest } from "../../services/friendRequest";
 import { getNewFriendsCount, friendExists } from "../../services/friendList";
@@ -40,6 +40,8 @@ export async function getGJUserInfoController(request: FastifyRequest<{ Body: Ge
         return reply.send(-1);
     }
 
+    const userRank = await getUserRank(userTarget.stats.stars);
+
     let userInfoObj = {
         1: userTarget.userName,
         2: targetAccountID,
@@ -55,6 +57,7 @@ export async function getGJUserInfoController(request: FastifyRequest<{ Body: Ge
         10: userTarget.stats.primaryColor,
         11: userTarget.stats.secondaryColor,
         51: userTarget.stats.glowColor,
+        30: userRank,
         18: messageStateToInt(userTarget.messageState),
         19: friendRequestStateToInt(userTarget.friendRequestState),
         50: commentHistoryStateToInt(userTarget.commentHistoryState),
