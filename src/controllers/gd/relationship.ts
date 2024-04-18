@@ -9,7 +9,7 @@ import { getBlockList } from "../../services/blockList";
 import { checkUserGjp2 } from "../../utils/crypt";
 import { gdObjToString } from "../../utils/gdForm";
 
-import { UserListType, IconType } from "../../helpers/enums";
+import { IconType } from "../../helpers/enums";
 
 export async function getGJUserListController(request: FastifyRequest<{ Body: GetGJUserListInput }>, reply: FastifyReply) {
     const { accountID, gjp2, type } = request.body;
@@ -27,7 +27,7 @@ export async function getGJUserListController(request: FastifyRequest<{ Body: Ge
     let userList: Array<{ id: number, isNew: boolean }> = [];
 
     switch (type) {
-        case UserListType.FriendList:
+        case "friendList":
             const friendList = await getFriendList(accountID);
 
             if (!friendList.length) {
@@ -38,7 +38,7 @@ export async function getGJUserListController(request: FastifyRequest<{ Body: Ge
 
             userList = friendList;
             break;
-        case UserListType.BlockedList:
+        case "blockList":
             const blockList = (await getBlockList(accountID)).map(blockedId => {
                 const blockedInfoObj = {
                     id: blockedId,

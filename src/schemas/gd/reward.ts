@@ -15,7 +15,16 @@ export const getGJRewardsSchema = z.object({
     gjp2: z.string(),
     udid: z.string(),
     chk: z.string(),
-    rewardType: z.coerce.number().int(),
+    rewardType: z.enum(["0", "1", "2"]).transform(value => {
+        switch (value) {
+            case "0":
+                return "None";
+            case "1":
+                return "Small";
+            case "2":
+                return "Big";
+        }
+    }),
     secret: z.string()
 });
 

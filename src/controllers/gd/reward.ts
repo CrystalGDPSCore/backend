@@ -10,7 +10,7 @@ import { getChestStuff } from "../../utils/chests";
 import { questTypeToInt } from "../../utils/prismaEnums";
 import { xor, safeBase64Encode, base64Decode, hashGdObj, checkUserGjp2 } from "../../utils/crypt";
 
-import { Salt, ChestType } from "../../helpers/enums";
+import { Salt } from "../../helpers/enums";
 
 export async function getGJChallengesController(request: FastifyRequest<{ Body: GetGJChallengesInput }>, reply: FastifyReply) {
     const { accountID, gjp2, udid, chk } = request.body;
@@ -79,22 +79,26 @@ export async function getGJRewardsController(request: FastifyRequest<{ Body: Get
     let totalSmallChests = user.stats.totalSmallChests;
     let totalBigChests = user.stats.totalBigChests;
 
+    let gdRewardType = 0;
+
     switch (rewardType) {
-        case ChestType.Small:
+        case "Small":
             if (await getUserChestRemaining(accountID, "Small")) {
                 return reply.send(-1);
             }
 
             totalSmallChests++;
+            gdRewardType = 1;
 
             await updateUserChestCount(accountID, "Small");
             break;
-        case ChestType.Big:
+        case "Big":
             if (await getUserChestRemaining(accountID, "Big")) {
                 return reply.send(-1);
             }
 
             totalBigChests++;
+            gdRewardType = 2;
 
             await updateUserChestCount(accountID, "Big");
             break;
@@ -114,7 +118,7 @@ export async function getGJRewardsController(request: FastifyRequest<{ Body: Get
                 await getUserChestRemaining(accountID, "Big"),
                 getChestStuff("Big"),
                 totalBigChests,
-                rewardType
+                gdRewardType
             ].join(":"),
             59182
         )
