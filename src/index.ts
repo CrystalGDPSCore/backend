@@ -26,9 +26,9 @@ import gdUserRoutes from "./routes/gd/user";
 
 import customContentRoutes from "./routes/other/customContent";
 
-import { database, server } from "./config.json";
+import { dev, database, server } from "./config.json";
 
-const fastify = Fastify({ logger: true });
+const fastify = Fastify({ logger: dev.logger });
 
 async function main() {
     fastify.setValidatorCompiler(validatorCompiler);

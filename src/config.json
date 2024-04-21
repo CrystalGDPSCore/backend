@@ -1,4 +1,7 @@
 {
+    "dev": {
+        "logger": true
+    },
     "database": {
         "path": "database1111"
     },
