@@ -62,7 +62,7 @@ export async function registerGJAccountController(request: FastifyRequest<{ Body
     } else {
         await createUser({
             userName: userName,
-            hashedPassword: encodeGjp2(password),
+            hashPassword: encodeGjp2(password),
             email: email
         });
     }
@@ -89,7 +89,7 @@ export async function loginGJAccountController(request: FastifyRequest<{ Body: L
         return reply.send(-12);
     }
 
-    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
         if (!loginAttempts) {
             await redis.set(`${user.id}:login`, 1, "EX", timeLimits.accountLoginFailed);
         } else {
@@ -113,7 +113,7 @@ export async function updateGJAccSettingsController(request: FastifyRequest<{ Bo
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
         return reply.send(-1);
     }
 
@@ -144,7 +144,7 @@ export async function backupGJAccountNewController(request: FastifyRequest<{ Bod
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
         return reply.send(-1);
     }
 
@@ -170,7 +170,7 @@ export async function syncGJAccountNewController(request: FastifyRequest<{ Body:
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
         return reply.send(-1);
     }
 

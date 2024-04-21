@@ -5,3 +5,4 @@ ffmpeg
 
 data/accounts/*.acc
 data/songs/*.mp3
+data/levels/*.lvl

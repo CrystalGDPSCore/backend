@@ -39,7 +39,7 @@ export async function uploadFriendRequestController(request: FastifyRequest<{ Bo
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, userOwn.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, userOwn.hashPassword)) {
         return reply.send(-1);
     }
 
@@ -88,7 +88,7 @@ export async function getGJFriendRequestsController(request: FastifyRequest<{ Bo
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, userOwn.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, userOwn.hashPassword)) {
         return reply.send(-1);
     }
 
@@ -121,7 +121,7 @@ export async function getGJFriendRequestsController(request: FastifyRequest<{ Bo
             15: userTarget.stats!.hasGlow ? 2 : 0,
             32: friendRequest.id,
             35: safeBase64Encode(friendRequest.comment ?? ""),
-            37: getRelativeTime(friendRequest.sentDate),
+            37: getRelativeTime(friendRequest.sendDate),
             41: friendRequest.isNew ? 1 : 0
         };
 
@@ -140,7 +140,7 @@ export async function readGJFriendRequestController(request: FastifyRequest<{ Bo
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
         return reply.send(-1);
     }
 
@@ -162,7 +162,7 @@ export async function acceptGJFriendRequestController(request: FastifyRequest<{ 
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, userOwn.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, userOwn.hashPassword)) {
         return reply.send(-1);
     }
 
@@ -198,7 +198,7 @@ export async function deleteGJFriendRequestsController(request: FastifyRequest<{
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
         return reply.send(-1);
     }
 

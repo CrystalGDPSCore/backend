@@ -40,7 +40,7 @@ export async function updateGJUserScoreController(request: FastifyRequest<{ Body
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
         return reply.send(-1);
     }
 

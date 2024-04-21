@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const createUserSchema = z.object({
     userName: z.string().regex(/^[0-9a-zA-Z]{3,15}$/),
-    hashedPassword: z.string().regex(/^\$2(a|b|x|y)\$[0-9]{1,2}\$[a-zA-Z.0-9\/+]{22}={0,2}[A-Za-z0-9+\/.+]{31}={0,2}$/),
+    hashPassword: z.string().regex(/^\$2(a|b|x|y)\$[0-9]{1,2}\$[a-zA-Z.0-9\/+]{22}={0,2}[A-Za-z0-9+\/.+]{31}={0,2}$/),
     email: z.string().email()
 });
 

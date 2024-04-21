@@ -28,7 +28,7 @@ export async function uploadGJAccCommentController(request: FastifyRequest<{ Bod
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
         return reply.send(-1);
     }
 
@@ -54,7 +54,7 @@ export async function getGJAccountCommentsController(request: FastifyRequest<{ B
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, userOwn.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, userOwn.hashPassword)) {
         return reply.send(-1);
     }
 
@@ -76,7 +76,7 @@ export async function getGJAccountCommentsController(request: FastifyRequest<{ B
             4: comment.likes,
             6: comment.id,
             7: comment.isSpam ? 1 : 0,
-            9: getRelativeTime(comment.postedDate)
+            9: getRelativeTime(comment.postDate)
         };
 
         return gdObjToString(commentInfoObj, "~");
@@ -94,7 +94,7 @@ export async function deleteGJAccCommentController(request: FastifyRequest<{ Bod
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
         return reply.send(-1);
     }
 

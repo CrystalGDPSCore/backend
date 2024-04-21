@@ -34,7 +34,7 @@ export async function uploadGJMessageController(request: FastifyRequest<{ Body: 
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, userOwn.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, userOwn.hashPassword)) {
         return reply.send(-1);
     }
 
@@ -90,7 +90,7 @@ export async function getGJMessagesController(request: FastifyRequest<{ Body: Ge
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, userOwn.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, userOwn.hashPassword)) {
         return reply.send(-1);
     }
 
@@ -116,7 +116,7 @@ export async function getGJMessagesController(request: FastifyRequest<{ Body: Ge
             3: userTarget.id,
             4: safeBase64Encode(message.subject),
             6: userTarget.userName,
-            7: getRelativeTime(message.sentDate),
+            7: getRelativeTime(message.sendDate),
             8: message.isNew ? 0 : 1,
             9: getSent ? 1 : 0
         };
@@ -138,7 +138,7 @@ export async function downloadGJMessageController(request: FastifyRequest<{ Body
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, userOwn.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, userOwn.hashPassword)) {
         return reply.send(-1);
     }
 
@@ -167,7 +167,7 @@ export async function downloadGJMessageController(request: FastifyRequest<{ Body
         4: safeBase64Encode(message.subject),
         5: safeBase64Encode(xor(message.body, 14251)),
         6: userTarget.userName,
-        7: getRelativeTime(message.sentDate),
+        7: getRelativeTime(message.sendDate),
         8: message.isNew ? 0 : 1,
         9: isSender ? 1 : 0
     };
@@ -184,7 +184,7 @@ export async function deleteGJMessagesController(request: FastifyRequest<{ Body:
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
         return reply.send(-1);
     }
 

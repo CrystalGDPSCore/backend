@@ -22,7 +22,8 @@
         "accountLoginFailed": 3600,
         "addSong": 300,
         "uploadUserComment": 5,
-        "uploadMessage": 5
+        "uploadMessage": 5,
+        "uploadLevel": 30
     },
     "chests": {
         "small": {
@@ -39,5 +40,8 @@
             "keyChance": 0.5,
             "waitTime": 28800
         }
+    },
+    "levels": {
+        "minObjects": 100
     }
 }

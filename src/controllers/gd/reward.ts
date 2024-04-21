@@ -21,7 +21,7 @@ export async function getGJChallengesController(request: FastifyRequest<{ Body: 
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
         return reply.send(-1);
     }
 
@@ -72,7 +72,7 @@ export async function getGJRewardsController(request: FastifyRequest<{ Body: Get
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
         return reply.send(-1);
     }
 

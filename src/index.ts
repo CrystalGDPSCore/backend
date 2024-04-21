@@ -17,6 +17,7 @@ import gdAccountCommentRoutes from "./routes/gd/accountComment";
 import gdBlockRoutes from "./routes/gd/block";
 import gdCustomContentRoutes from "./routes/gd/customContent";
 import gdFriendRequestRoutes from "./routes/gd/friendRequest";
+import gdLevelRoutes from "./routes/gd/level";
 import gdMessageRoutes from "./routes/gd/message";
 import gdRelationshipRoutes from "./routes/gd/relationship";
 import gdRewardRoutes from "./routes/gd/reward";
@@ -64,6 +65,7 @@ async function main() {
         gdBlockRoutes,
         gdCustomContentRoutes,
         gdFriendRequestRoutes,
+        gdLevelRoutes,
         gdMessageRoutes,
         gdRelationshipRoutes,
         gdRewardRoutes,

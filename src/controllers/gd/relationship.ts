@@ -20,7 +20,7 @@ export async function getGJUserListController(request: FastifyRequest<{ Body: Ge
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, userOwn.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, userOwn.hashPassword)) {
         return reply.send(-1);
     }
 
@@ -94,7 +94,7 @@ export async function removeGJFriendController(request: FastifyRequest<{ Body: R
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, userOwn.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, userOwn.hashPassword)) {
         return reply.send(-1);
     }
 

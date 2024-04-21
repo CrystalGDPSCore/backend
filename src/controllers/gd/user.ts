@@ -26,7 +26,7 @@ export async function getGJUserInfoController(request: FastifyRequest<{ Body: Ge
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, userOwn.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, userOwn.hashPassword)) {
         return reply.send(-1);
     }
 
@@ -103,7 +103,7 @@ export async function getGJUserInfoController(request: FastifyRequest<{ Body: Ge
                     31: 3,
                     32: friendRequest.id,
                     35: safeBase64Encode(friendRequest.comment ?? ""),
-                    37: getRelativeTime(friendRequest.sentDate)
+                    37: getRelativeTime(friendRequest.sendDate)
                 };
                 break;
             default:
@@ -126,7 +126,7 @@ export async function getGJUsersController(request: FastifyRequest<{ Body: GetGJ
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, userOwn.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, userOwn.hashPassword)) {
         return reply.send(-1);
     }
 
@@ -172,7 +172,7 @@ export async function requestUserAccessController(request: FastifyRequest<{ Body
         return reply.send(-1);
     }
 
-    if (!checkUserGjp2(gjp2, user.hashedPassword)) {
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
         return reply.send(-1);
     }
 

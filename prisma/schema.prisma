@@ -14,7 +14,7 @@ datasource db {
 model User {
   id                  Int                 @id @unique @default(autoincrement())
   userName            String              @unique
-  hashedPassword      String
+  hashPassword        String
   email               String
   messageState        MessageState        @default(All)
   friendRequestState  FriendRequestState  @default(All)
@@ -32,6 +32,7 @@ model User {
   comments            Comment[]
   friends             FriendList?
   friendRequests      FriendRequest[]
+  levels              Level[]
   messages            Message[]
   userComments        UserComment[]
   stats               UserStats?
@@ -73,15 +74,45 @@ model UserStats {
 }
 
 model UserComment {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  comment    String
-  likes      Int      @default(0)
-  isSpam     Boolean  @default(false)
-  postedDate DateTime @default(now()) @db.Timestamptz(6)
-  user       User     @relation(fields: [userId], references: [id])
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  comment  String
+  likes    Int      @default(0)
+  isSpam   Boolean  @default(false)
+  postDate DateTime @default(now()) @db.Timestamptz(6)
+  user     User     @relation(fields: [userId], references: [id])
 
   @@map("userComments")
+}
+
+model Level {
+  id               Int         @id
+  authorId         Int
+  name             String
+  description      String?
+  version          Int
+  length           LevelLength
+  visibility       Visibility
+  difficulty       Difficulty  @default(NA)
+  ratingType       LevelRating @default(None)
+  originalLevelId  Int
+  requestedStars   Int
+  stars            Int         @default(0)
+  coins            Int
+  likes            Int         @default(0)
+  downloads        Int         @default(0)
+  objectsCount     Int
+  defaultSongId    Int
+  sfxIds           Int[]
+  songIds          Int[]
+  isCustomSong     Boolean
+  hasLdm           Boolean
+  hasTwoPlayerMode Boolean
+  createDate       DateTime    @default(now()) @db.Timestamptz(6)
+  updateDate       DateTime    @default(now()) @db.Timestamptz(6)
+  author           User        @relation(fields: [authorId], references: [id])
+
+  @@map("levels")
 }
 
 model Comment {
@@ -93,7 +124,7 @@ model Comment {
   likes       Int      @default(0)
   isSpam      Boolean  @default(false)
   isLevelList Boolean  @default(false)
-  postedDate  DateTime @default(now()) @db.Timestamptz(6)
+  postDate    DateTime @default(now()) @db.Timestamptz(6)
   user        User     @relation(fields: [userId], references: [id])
 
   @@map("comments")
@@ -106,7 +137,7 @@ model Message {
   subject     String
   body        String
   isNew       Boolean  @default(true)
-  sentDate    DateTime @default(now()) @db.Timestamptz(6)
+  sendDate    DateTime @default(now()) @db.Timestamptz(6)
   user        User     @relation(fields: [userId], references: [id])
 
   @@map("messages")
@@ -118,7 +149,7 @@ model FriendRequest {
   recipientId Int
   comment     String?
   isNew       Boolean  @default(true)
-  sentDate    DateTime @default(now()) @db.Timestamptz(6)
+  sendDate    DateTime @default(now()) @db.Timestamptz(6)
   user        User     @relation(fields: [userId], references: [id])
 
   @@map("friendRequests")
@@ -158,7 +189,7 @@ model Song {
   resource   String   @unique
   link       String   @unique
   isDisabled Boolean  @default(false)
-  uploadTime DateTime @default(now()) @db.Timestamptz(6)
+  uploadDate DateTime @default(now()) @db.Timestamptz(6)
   artist     Artist   @relation(fields: [artistId], references: [id])
 
   @@map("songs")
@@ -203,4 +234,47 @@ enum CommentHistoryState {
   All
   Friends
   None
+}
+
+enum LevelLength {
+  Tiny
+  Short
+  Medium
+  Long
+  XL
+  Platformer
+}
+
+enum LevelRating {
+  None
+  Featured
+  Epic
+  Legendary
+  Mythic
+}
+
+enum Visibility {
+  Listed
+  FriendsOnly
+  Unlisted
+}
+
+enum Difficulty {
+  NA
+  Auto
+  Easy
+  Normal
+  Hard
+  Harder
+  Insane
+  EasyDemon
+  MediumDemon
+  HardDemon
+  InsaneDemon
+  ExtremeDemon
+}
+
+enum ListRating {
+  None
+  Featured
 }
