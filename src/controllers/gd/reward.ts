@@ -51,7 +51,7 @@ export async function getGJChallengesController(request: FastifyRequest<{ Body: 
                 xor(base64Decode(chk.slice(5)), 19847),
                 udid,
                 accountID,
-                Math.round((new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - Date.now()) / 1000),
+                Math.round((new Date().setHours(24, 0, 0, 0) - Date.now()) / 1000),
                 ...quests
             ].join(":"),
             19847
