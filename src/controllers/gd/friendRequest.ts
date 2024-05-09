@@ -14,7 +14,8 @@ import {
     getFriendRequests,
     readFriendRequest,
     addFriendFromRequest,
-    deleteFriendRequests
+    deleteFriendRequests,
+    getFriendRequestsCount
 } from "../../services/friendRequest";
 import { getUserById, getUsers } from "../../services/user";
 import { friendExists, getTotalFriendsCount } from "../../services/friendList";
@@ -105,7 +106,7 @@ export async function getGJFriendRequestsController(request: FastifyRequest<{ Bo
 
     const users = await getUsers(friendRequests.map(friendRequest => friendRequest[userType]));
 
-    const requests = friendRequests.map(friendRequest => {
+    const friendRequestList = friendRequests.map(friendRequest => {
         const userTarget = users.find(user => user.id == friendRequest[userType])!;
 
         const shownIcon = Object.values(IconType)[userTarget.stats!.iconType];
@@ -128,7 +129,12 @@ export async function getGJFriendRequestsController(request: FastifyRequest<{ Bo
         return gdObjToString(friendRequestInfoObj);
     }).join("|");
 
-    return reply.send(`${requests}#${friendRequests.length}:${page * 10}:10`);
+    const generalInfo = [
+        friendRequestList,
+        [await getFriendRequestsCount(accountID, getSent), page * 10, 10].join(":")
+    ].join("#");
+
+    return reply.send(generalInfo);
 }
 
 export async function readGJFriendRequestController(request: FastifyRequest<{ Body: ReadGJFriendRequestInput }>, reply: FastifyReply) {

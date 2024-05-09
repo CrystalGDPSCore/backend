@@ -5,7 +5,7 @@ import { redis } from "../../utils/db";
 import { UploadGJAccCommentInput, GetGJAccountCommentsInput, DeleteGJAccCommentInput } from "../../schemas/gd/accountComment";
 
 import { getUserById } from "../../services/user";
-import { createUserComment, getUserComments, deleteUserComment } from "../../services/userComment";
+import { createUserComment, getUserComments, deleteUserComment, getUserCommentsCount } from "../../services/userComment";
 
 import { checkUserGjp2, safeBase64Decode, safeBase64Encode } from "../../utils/crypt";
 import { gdObjToString } from "../../utils/gdForm";
@@ -64,13 +64,13 @@ export async function getGJAccountCommentsController(request: FastifyRequest<{ B
         return reply.send(-1);
     }
 
-    const userComments = await getUserComments(accountID[1], page * 10);
+    const comments = await getUserComments(accountID[1], page * 10);
 
-    if (!userComments.length) {
+    if (!comments.length) {
         return reply.send("#0:0:0");
     }
 
-    const comments = userComments.map(comment => {
+    const commentList = comments.map(comment => {
         const commentInfoObj = {
             2: safeBase64Encode(comment.comment),
             4: comment.likes,
@@ -82,7 +82,12 @@ export async function getGJAccountCommentsController(request: FastifyRequest<{ B
         return gdObjToString(commentInfoObj, "~");
     }).join("|");
 
-    return reply.send(`${comments}#${userComments.length}:${page * 10}:10`);
+    const generalInfo = [
+        commentList,
+        [await getUserCommentsCount(accountID[1]), page * 10, 10].join(":")
+    ].join("#");
+
+    return reply.send(generalInfo);
 }
 
 export async function deleteGJAccCommentController(request: FastifyRequest<{ Body: DeleteGJAccCommentInput }>, reply: FastifyReply) {

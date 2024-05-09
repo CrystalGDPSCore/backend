@@ -56,6 +56,18 @@ export async function getFriendRequests(userId: number, input: GetFriendRequests
     return friendRequests;
 }
 
+export async function getFriendRequestsCount(userId: number, isSent: boolean) {
+    const userType = isSent ? "userId" : "recipientId";
+
+    const friendRequestsCount = await db.friendRequest.count({
+        where: {
+            [userType]: userId
+        }
+    });
+
+    return friendRequestsCount;
+}
+
 export async function getFriendRequest(userId: number, recipientId: number) {
     const friendRequest = await db.friendRequest.findFirst({
         where: {

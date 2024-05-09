@@ -160,7 +160,12 @@ export async function getGJUsersController(request: FastifyRequest<{ Body: GetGJ
         14: userTarget.stats.iconType
     };
 
-    return reply.send(`${gdObjToString(userInfoObj)}#1:0:10`);
+    const generalInfo = [
+        gdObjToString(userInfoObj),
+        [1, 0, 10].join(":")
+    ].join("#");
+
+    return reply.send(generalInfo);
 }
 
 export async function requestUserAccessController(request: FastifyRequest<{ Body: RequestUserAccessInput }>, reply: FastifyReply) {

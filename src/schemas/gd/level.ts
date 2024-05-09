@@ -48,3 +48,189 @@ export const uploadGJLevelSchema = z.object({
 });
 
 export type UploadGJLevelInput = z.infer<typeof uploadGJLevelSchema>;
+
+export const getGJLevelsSchema = z.object({
+    accountID: z.coerce.number().int(),
+    gjp2: z.string(),
+    type: z.enum(["0", "1", "2", "3", "4", "5", "6", "7", "10", "11", "12", "13", "21", "22", "23", "25", "27"]).transform(value => {
+        switch (value) {
+            case "0":
+                return "Search";
+            case "1":
+                return "Downloads";
+            case "2":
+                return "Likes";
+            case "3":
+                return "Trending";
+            case "4":
+                return "Recent";
+            case "5":
+                return "UserLevels";
+            case "6":
+                return "Featured";
+            case "7":
+                return "Magic";
+            case "10":
+                return "MapPacks";
+            case "11":
+                return "Awarded";
+            case "12":
+                return "Followed";
+            case "13":
+                return "Friends";
+            case "21":
+                return "DailySafe";
+            case "22":
+                return "WeeklySafe";
+            case "23":
+                return "EventSafe";
+            case "25":
+                return "LevelList";
+            case "27":
+                return "Sent";
+        }
+    }).catch("Search"),
+    str: z.string().transform(value => {
+        if (value.includes(",")) {
+            const levelIds = value.split(",").map(levelId => parseInt(levelId));
+
+            return levelIds;
+        }
+
+        if (isNaN(parseInt(value))) {
+            return value;
+        }
+
+        return parseInt(value);
+    }).catch(-1),
+    diff: z.array(z.string()).transform(value => {
+        const difficulties = value[0].split(",").map(levelDifficulty => {
+            switch (levelDifficulty) {
+                case "-1":
+                    return "NA";
+                case "-2":
+                    return "Demon";
+                case "-3":
+                    return "Auto";
+                case "1":
+                    return "Easy";
+                case "2":
+                    return "Normal";
+                case "3":
+                    return "Hard";
+                case "4":
+                    return "Harder";
+                case "5":
+                    return "Insane";
+                default:
+                    return "NotSelected";
+            }
+        });
+
+        return difficulties;
+    }).catch(["NotSelected"]),
+    len: z.string().transform(value => {
+        const lengths = value.split(",").map(levelLength => {
+            switch (levelLength) {
+                case "0":
+                    return "Tiny";
+                case "1":
+                    return "Short";
+                case "2":
+                    return "Medium";
+                case "3":
+                    return "Long";
+                case "4":
+                    return "XL";
+                case "5":
+                    return "Platformer";
+                default:
+                    return "NotSelected";
+            }
+        });
+
+        return lengths;
+    }).catch(["NotSelected"]),
+    page: z.coerce.number().int().catch(-1),
+    uncompleted: z.enum(["0", "1"]).transform(value => value == "1").catch(false),
+    onlyCompleted: z.enum(["0", "1"]).transform(value => value == "1").catch(false),
+    completedLevels: z.string().transform(value => {
+        const levelIds = value.slice(1, -1).split(",").map(levelId => parseInt(levelId));
+
+        return levelIds;
+    }).catch([]),
+    featured: z.enum(["0", "1"]).transform(value => value == "1").catch(false),
+    original: z.enum(["0", "1"]).transform(value => value == "1").catch(false),
+    twoPlayer: z.enum(["0", "1"]).transform(value => value == "1").catch(false),
+    coins: z.enum(["0", "1"]).transform(value => value == "1").catch(false),
+    song: z.coerce.number().int().catch(-1),
+    customSong: z.coerce.boolean().catch(false),
+    noStar: z.coerce.boolean().catch(false),
+    star: z.coerce.boolean().catch(false),
+    epic: z.coerce.boolean().catch(false),
+    mythic: z.coerce.boolean().catch(false),
+    legendary: z.coerce.boolean().catch(false),
+    demonFilter: z.enum(["1", "2", "3", "4", "5"]).transform(value => {
+        switch (value) {
+            case "1":
+                return "EasyDemon";
+            case "2":
+                return "MediumDemon";
+            case "3":
+                return "HardDemon";
+            case "4":
+                return "InsaneDemon";
+            case "5":
+                return "ExtremeDemon";
+            default:
+                return "NotSelected";
+        }
+    }).catch("NotSelected"),
+    followed: z.string().transform(value => {
+        if (!value) {
+            return [];
+        }
+
+        const userIds = value.split(",").map(userId => parseInt(userId));
+
+        return userIds;
+    }).catch([]),
+    gauntlet: z.coerce.number().int().catch(-1),
+    secret: z.string()
+});
+
+export type GetGJLevelsInput = z.infer<typeof getGJLevelsSchema>;
+
+export const downloadGJLevelSchema = z.object({
+    accountID: z.coerce.number().int(),
+    gjp2: z.string(),
+    levelID: z.coerce.number().int(),
+    secret: z.string()
+});
+
+export type DownloadGJLevelInput = z.infer<typeof downloadGJLevelSchema>;
+
+export const getGJDailyLevelSchema = z.object({
+    accountID: z.coerce.number().int(),
+    gjp2: z.string(),
+    type: z.enum(["0", "1"]).transform(value => {
+        switch (value) {
+            case "0":
+                return "Daily";
+            case "1":
+                return "Weekly";
+        }
+    }),
+    secret: z.string()
+});
+
+export type GetGJDailyLevelInput = z.infer<typeof getGJDailyLevelSchema>;
+
+export const deleteGJLevelUserSchema = z.object({
+    accountID: z.coerce.number().int(),
+    gjp2: z.string(),
+    levelID: z.coerce.number().int(),
+    secret: z.string()
+});
+
+export type DeleteGJLevelUserInput = z.infer<typeof deleteGJLevelUserSchema>;

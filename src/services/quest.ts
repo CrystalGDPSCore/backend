@@ -1,4 +1,4 @@
-import { QuestType } from "@prisma/client";
+import { QuestType, $Enums } from "@prisma/client";
 
 import { db } from "../utils/db";
 

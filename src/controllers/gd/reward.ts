@@ -51,7 +51,7 @@ export async function getGJChallengesController(request: FastifyRequest<{ Body: 
                 xor(base64Decode(chk.slice(5)), 19847),
                 udid,
                 accountID,
-                Math.round((new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60000 - Date.now()) / 1000),
+                Math.round((new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - Date.now()) / 1000),
                 ...quests
             ].join(":"),
             19847
@@ -60,7 +60,12 @@ export async function getGJChallengesController(request: FastifyRequest<{ Body: 
 
     const resultHash = hashGdObj(result, Salt.Challenge);
 
-    return reply.send(`crstl${result}|${resultHash}`);
+    const generalInfo = [
+        result,
+        resultHash
+    ].join("|");
+
+    return reply.send(`crstl${generalInfo}`);
 }
 
 export async function getGJRewardsController(request: FastifyRequest<{ Body: GetGJRewardsInput }>, reply: FastifyReply) {
@@ -126,5 +131,10 @@ export async function getGJRewardsController(request: FastifyRequest<{ Body: Get
 
     const resultHash = hashGdObj(result, Salt.Reward);
 
-    return reply.send(`crstl${result}|${resultHash}`);
+    const generalInfo = [
+        result,
+        resultHash
+    ].join("|");
+
+    return reply.send(`crstl${generalInfo}`);
 }

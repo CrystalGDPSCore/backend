@@ -31,11 +31,11 @@ export function safeBase64Encode(str: string) {
 }
 
 export function safeBase64Decode(str: string) {
-    return base64Decode(str.replace(/\-/g, "+").replace(/\_/g, "/"));
+    return base64Decode(str.replace(/-/g, "+").replace(/_/g, "/"));
 }
 
 export function hashGdObj(str: string, salt: Salt) {
-    const hash = crypto.createHash("sha1").update(`${str}${salt}`).digest("hex");
+    const hash = crypto.createHash("sha1").update(`${str}${salt}`, "utf-8").digest("hex");
     
     return hash;
 }
@@ -69,6 +69,6 @@ export function encodeGjp2(password: string) {
     return hashPassword(gjp2);
 }
 
-export function checkUserGjp2(gjp2: string, hashedPassword: string) {
-    return bcrypt.compareSync(gjp2, hashedPassword);
+export function checkUserGjp2(gjp2: string, hashPassword: string) {
+    return bcrypt.compareSync(gjp2, hashPassword);
 }

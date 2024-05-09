@@ -3,7 +3,8 @@
         "logger": true
     },
     "database": {
-        "path": "database1111"
+        "generalPath": "database1111",
+        "secondaryPath": "database111"
     },
     "server": {
         "name": "CrystalGDPS",

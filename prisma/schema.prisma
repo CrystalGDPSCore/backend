@@ -34,6 +34,7 @@ model User {
   friendRequests      FriendRequest[]
   levels              Level[]
   messages            Message[]
+  suggestLevels       SuggestLevel[]
   userComments        UserComment[]
   stats               UserStats?
 
@@ -86,33 +87,79 @@ model UserComment {
 }
 
 model Level {
-  id               Int         @id
+  id               Int           @id
   authorId         Int
   name             String
   description      String?
   version          Int
   length           LevelLength
   visibility       Visibility
-  difficulty       Difficulty  @default(NA)
-  ratingType       LevelRating @default(None)
+  difficulty       Difficulty    @default(NA)
+  ratingType       LevelRating   @default(None)
   originalLevelId  Int
   requestedStars   Int
-  stars            Int         @default(0)
+  stars            Int           @default(0)
   coins            Int
-  likes            Int         @default(0)
-  downloads        Int         @default(0)
+  likes            Int           @default(0)
+  downloads        Int           @default(0)
   objectsCount     Int
   defaultSongId    Int
   sfxIds           Int[]
   songIds          Int[]
   isCustomSong     Boolean
+  isCoinsVerified  Boolean       @default(false)
   hasLdm           Boolean
   hasTwoPlayerMode Boolean
-  createDate       DateTime    @default(now()) @db.Timestamptz(6)
-  updateDate       DateTime    @default(now()) @db.Timestamptz(6)
-  author           User        @relation(fields: [authorId], references: [id])
+  createDate       DateTime      @default(now()) @db.Timestamptz(6)
+  updateDate       DateTime      @default(now()) @db.Timestamptz(6)
+  rateDate         DateTime?     @db.Timestamptz(6)
+  event            Event?
+  author           User          @relation(fields: [authorId], references: [id])
+  suggest          SuggestLevel?
 
   @@map("levels")
+}
+
+model Event {
+  id         Int       @id @default(autoincrement())
+  type       EventType
+  levelId    Int       @unique
+  assignDate DateTime  @default(now()) @db.Timestamptz(6)
+  level      Level     @relation(fields: [levelId], references: [id], onDelete: Cascade)
+
+  @@map("events")
+}
+
+model Gauntlet {
+  id       Int   @id
+  /// Array length is 5
+  levelIds Int[]
+
+  @@map("gauntlets")
+}
+
+model MapPack {
+  id         Int               @id @default(autoincrement())
+  name       String
+  difficulty MapPackDifficulty
+  stars      Int
+  coins      Int
+  levelIds   Int[]
+  color      String            @default("ffffff")
+  createDate DateTime          @default(now()) @db.Timestamptz(6)
+
+  @@map("mapPacks")
+}
+
+model SuggestLevel {
+  id          Int      @id @default(autoincrement())
+  suggestById Int
+  levelId     Int      @unique
+  suggestDate DateTime @default(now()) @db.Timestamptz(6)
+  level       Level    @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  suggestBy   User     @relation(fields: [suggestById], references: [id])
+
+  @@map("suggestLevels")
 }
 
 model Comment {
@@ -272,6 +319,25 @@ enum Difficulty {
   HardDemon
   InsaneDemon
   ExtremeDemon
+}
+
+enum MapPackDifficulty {
+  Auto
+  Easy
+  Normal
+  Hard
+  Harder
+  Insane
+  EasyDemon
+  MediumDemon
+  HardDemon
+  InsaneDemon
+  ExtremeDemon
+}
+
+enum EventType {
+  Daily
+  Weekly
 }
 
 enum ListRating {

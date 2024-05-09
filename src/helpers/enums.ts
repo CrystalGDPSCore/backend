@@ -49,6 +49,68 @@ export enum ShardType {
     SoulShard
 }
 
+export enum ReturnLevelDifficulty {
+    Auto = 10,
+    NA = 0,
+    Easy = 10,
+    Normal = 20,
+    Hard = 30,
+    Harder = 40,
+    Insane = 50,
+    EasyDemon = 10,
+    MediumDemon = 10,
+    HardDemon = 10,
+    InsaneDemon = 10,
+    ExtremeDemon = 10
+}
+
+export enum SelectDemonDifficulty {
+    EasyDemon = 1,
+    MediumDemon,
+    HardDemon,
+    InsaneDemon,
+    ExtremeDemon
+}
+
+export enum ReturnDemonDifficulty {
+    EasyDemon = 3,
+    MediumDemon,
+    HardDemon = 2,
+    InsaneDemon = 5,
+    ExtremeDemon
+}
+
+export enum MapPackDifficulty {
+    Auto,
+    Easy,
+    Normal,
+    Hard,
+    Harder,
+    Insane,
+    EasyDemon = 7,
+    MediumDemon ,
+    HardDemon = 6,
+    InsaneDemon = 9,
+    ExtremeDemon,
+}
+
+export enum LevelLength {
+    Tiny,
+    Short,
+    Medium,
+    Long,
+    XL,
+    Platformer
+}
+
+export enum LevelRatingType {
+    None = 0,
+    Featured = 0,
+    Epic,
+    Legendary,
+    Mythic
+}
+
 export enum QueryMode {
     default,
     insensitive

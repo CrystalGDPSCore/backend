@@ -53,6 +53,18 @@ export async function getMessages(userId: number, input: GetMessagesInput) {
     return messages;
 }
 
+export async function getMessagesCount(userId: number, isSent: boolean) {
+    const userType = isSent ? "userId" : "recipientId";
+
+    const messagesCount = await db.message.count({
+        where: {
+            [userType]: userId
+        }
+    });
+
+    return messagesCount;
+}
+
 export async function updateMessage(recipientId: number, messageId: number) {
     const updatedMessage = await db.message.update({
         where: {

@@ -7,7 +7,7 @@ import { UploadGJMessageInput, GetGJMessagesInput, DownloadGJMessageInput, Delet
 import { getUserById, getUsers } from "../../services/user";
 import { blockedExists } from "../../services/blockList";
 import { friendExists } from "../../services/friendList";
-import { createMessage, getMessages, updateMessage, getMessage, deleteMessages } from "../../services/message";
+import { createMessage, getMessages, updateMessage, getMessage, deleteMessages, getMessagesCount } from "../../services/message";
 
 import { checkUserGjp2, safeBase64Decode, safeBase64Encode, base64Decode, xor } from "../../utils/crypt";
 import { getRelativeTime } from "../../utils/relativeTime";
@@ -96,18 +96,18 @@ export async function getGJMessagesController(request: FastifyRequest<{ Body: Ge
 
     const userType = getSent ? "recipientId" : "userId";
 
-    const userMessages = await getMessages(accountID, {
+    const messages = await getMessages(accountID, {
         offset: page * 10,
         isSent: getSent
     });
 
-    if (!userMessages.length) {
+    if (!messages.length) {
         return reply.send(-2);
     }
 
-    const users = await getUsers(userMessages.map(message => message[userType]));
+    const users = await getUsers(messages.map(message => message[userType]));
 
-    const messages = userMessages.map(message => {
+    const messageList = messages.map(message => {
         const userTarget = users.find(user => user.id == message[userType])!;
 
         const messageInfoObj = {
@@ -124,13 +124,16 @@ export async function getGJMessagesController(request: FastifyRequest<{ Body: Ge
         return gdObjToString(messageInfoObj);
     }).join("|");
 
-    return reply.send(`${messages}#${userMessages.length}:${page * 10}:10`);
+    const generalInfo = [
+        messageList,
+        [await getMessagesCount(accountID, getSent), page * 10, 10].join(":")
+    ].join("#");
+
+    return reply.send(generalInfo);
 }
 
 export async function downloadGJMessageController(request: FastifyRequest<{ Body: DownloadGJMessageInput }>, reply: FastifyReply) {
     const { accountID, gjp2, isSender, messageID } = request.body;
-
-    console.log(request.body);
 
     const userOwn = await getUserById(accountID);
 
@@ -156,7 +159,7 @@ export async function downloadGJMessageController(request: FastifyRequest<{ Body
         return reply.send(-1);
     }
 
-    if (message.isNew && !isSender) {
+    if (!isSender && message.isNew) {
         await updateMessage(message.recipientId, messageID);
     }
 

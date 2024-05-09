@@ -58,3 +58,18 @@ export async function getSongByResource(resource: string) {
 
     return song;
 }
+
+export async function getSongs(songIds: Array<number>) {
+    const songs = await db.song.findMany({
+        where: {
+            id: {
+                in: songIds
+            }
+        },
+        include: {
+            artist: true
+        }
+    });
+
+    return songs;
+}

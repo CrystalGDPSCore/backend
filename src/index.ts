@@ -18,6 +18,7 @@ import gdBlockRoutes from "./routes/gd/block";
 import gdCustomContentRoutes from "./routes/gd/customContent";
 import gdFriendRequestRoutes from "./routes/gd/friendRequest";
 import gdLevelRoutes from "./routes/gd/level";
+import gdLevelPackRoutes from "./routes/gd/levelPack";
 import gdMessageRoutes from "./routes/gd/message";
 import gdRelationshipRoutes from "./routes/gd/relationship";
 import gdRewardRoutes from "./routes/gd/reward";
@@ -66,6 +67,7 @@ async function main() {
         gdCustomContentRoutes,
         gdFriendRequestRoutes,
         gdLevelRoutes,
+        gdLevelPackRoutes,
         gdMessageRoutes,
         gdRelationshipRoutes,
         gdRewardRoutes,
@@ -74,8 +76,10 @@ async function main() {
     ];
 
     for (const gdRoute of gdRoutes) {
-        fastify.register(gdRoute, { prefix: database.path });
+        fastify.register(gdRoute, { prefix: database.generalPath });
     }
+
+    fastify.register(gdLevelRoutes, { prefix: database.secondaryPath });
 
     fastify.register(customContentRoutes);
 

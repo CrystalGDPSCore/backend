@@ -36,3 +36,13 @@ export async function deleteUserComment(userId: number, commentId: number) {
 
     return userComment;
 }
+
+export async function getUserCommentsCount(userId: number) {
+    const userCommentsCount = await db.userComment.count({
+        where: {
+            userId
+        }
+    });
+
+    return userCommentsCount;
+}

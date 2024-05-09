@@ -174,17 +174,19 @@ export async function syncGJAccountNewController(request: FastifyRequest<{ Body:
         return reply.send(-1);
     }
 
+    let saveData = "";
+
     try {
-        const saveData = readFileSync(path.join(__dirname, "../../../", "data", "accounts", `${accountID}.acc`), "utf-8");
-
-        await redis.set(`${accountID}:sync`, 1, "EX", timeLimits.accountSync);
-
-        return reply.send(saveData);
+        saveData = readFileSync(path.join(__dirname, "../../../", "data", "accounts", `${accountID}.acc`), "utf-8");
     } catch {
         return reply.send(-1);
     }
+
+    await redis.set(`${accountID}:sync`, 1, "EX", timeLimits.accountSync);
+
+    return reply.send(saveData);
 }
 
 export async function getAccountUrlController(request: FastifyRequest, reply: FastifyReply) {
-    return reply.send(`${server.domain}/${database.path}`);
+    return reply.send(`${server.domain}/${database.generalPath}`);
 }

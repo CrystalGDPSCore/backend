@@ -34,7 +34,7 @@ export type DownloadGJMessageInput = z.infer<typeof downloadGJMessageSchema>;
 export const deleteGJMessagesSchema = z.object({
     accountID: z.coerce.number().int(),
     gjp2: z.string(),
-    messageID: z.coerce.number().int().catch(0),
+    messageID: z.coerce.number().int().catch(-1),
     messages: z.string().transform(value => value.split(",").map(messageId => parseInt(messageId))).catch([]),
     isSender: z.coerce.boolean().catch(false),
     secret: z.string()

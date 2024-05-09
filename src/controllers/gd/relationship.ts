@@ -24,7 +24,7 @@ export async function getGJUserListController(request: FastifyRequest<{ Body: Ge
         return reply.send(-1);
     }
 
-    let userList: Array<{ id: number, isNew: boolean }> = [];
+    let users: Array<{ id: number, isNew: boolean }> = [];
 
     switch (type) {
         case "friendList":
@@ -36,7 +36,7 @@ export async function getGJUserListController(request: FastifyRequest<{ Body: Ge
 
             await updateFriendList(accountID);
 
-            userList = friendList;
+            users = friendList;
             break;
         case "blockList":
             const blockList = (await getBlockList(accountID)).map(blockedId => {
@@ -52,14 +52,14 @@ export async function getGJUserListController(request: FastifyRequest<{ Body: Ge
                 return reply.send(-2);
             }
 
-            userList = blockList;
+            users = blockList;
             break;
     }
 
-    const users = await getUsers(userList.reverse().map(user => user.id));
+    const usersInfo = await getUsers(users.reverse().map(user => user.id));
 
-    const list = userList.map(listUser => {
-        const userTarget = users.find(user => user.id == listUser.id)!;
+    const userList = users.map(user => {
+        const userTarget = usersInfo.find(userInfo => userInfo.id == user.id)!;
 
         const shownIcon = Object.values(IconType)[userTarget.stats!.iconType];
 
@@ -72,13 +72,13 @@ export async function getGJUserListController(request: FastifyRequest<{ Body: Ge
             10: userTarget.stats!.primaryColor,
             11: userTarget.stats!.secondaryColor,
             15: userTarget.stats!.hasGlow ? 2 : 0,
-            41: listUser.isNew ? 1 : 0
+            41: user.isNew ? 1 : 0
         };
 
         return gdObjToString(userInfoObj);
     }).join("|");
 
-    return reply.send(list);
+    return reply.send(userList);
 }
 
 export async function removeGJFriendController(request: FastifyRequest<{ Body: RemoveGJFriendInput }>, reply: FastifyReply) {
