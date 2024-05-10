@@ -13,11 +13,11 @@
         "onlyRealEmails": false
     },
     "commentColors": {
-        "None": "#ffffff",
-        "Mod": "#FFD700",
-        "ElderMod": "#8f6ed2",
-        "LeaderboardMod": "#048af5",
-        "Admin": "#100ced"
+        "None": "ffffff",
+        "Mod": "ffd700",
+        "ElderMod": "8f6ed2",
+        "LeaderboardMod": "048af5",
+        "Admin": "100ced"
     },
     "timeLimits": {
         "accountActivate": 3600,
