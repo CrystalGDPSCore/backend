@@ -1,3 +1,5 @@
+import { MessageState, FriendRequestState, CommentHistoryState } from "@prisma/client";
+
 import { z } from "zod";
 
 const createUserSchema = z.object({
@@ -16,9 +18,9 @@ const updateUserAccessSchema = z.object({
 export type UpdateUserAccessInput = z.infer<typeof updateUserAccessSchema>;
 
 const updateUserSettingsSchema = z.object({
-    messageState: z.enum(["All", "Friends", "None"]),
-    friendRequestState: z.enum(["All", "None"]), 
-    commentHistoryState: z.enum(["All", "Friends", "None"]),
+    messageState: z.nativeEnum(MessageState),
+    friendRequestState: z.nativeEnum(FriendRequestState), 
+    commentHistoryState: z.nativeEnum(CommentHistoryState),
     youtube: z.string().regex(/^[0-9a-zA-Z-_]+$/),
     twitter: z.string().regex(/^[0-9a-zA-Z-_]+$/),
     twitch: z.string().regex(/^[0-9a-zA-Z-_]+$/)
