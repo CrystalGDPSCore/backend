@@ -1,3 +1,5 @@
+import { SuggestDifficulty } from "@prisma/client";
+
 import { z } from "zod";
 
 export const uploadGJLevelSchema = z.object({
@@ -234,3 +236,78 @@ export const deleteGJLevelUserSchema = z.object({
 });
 
 export type DeleteGJLevelUserInput = z.infer<typeof deleteGJLevelUserSchema>;
+
+export const updateGJDescSchema = z.object({
+    accountID: z.coerce.number().int(),
+    gjp2: z.string(),
+    levelID: z.coerce.number().int(),
+    levelDesc: z.string(),
+    secret: z.string()
+});
+
+export type UpdateGJDescInput = z.infer<typeof updateGJDescSchema>;
+
+export const suggestGJStarsSchema = z.object({
+    accountID: z.coerce.number().int(),
+    gjp2: z.string(),
+    levelID: z.coerce.number().int(),
+    stars: z.coerce.number().int(),
+    feature: z.enum(["0", "1", "2", "3", "4"]).transform(value => {
+        switch (value) {
+            case "0":
+                return "None";
+            case "1":
+                return "Featured";
+            case "2":
+                return "Epic";
+            case "3":
+                return "Legendary";
+            case "4":
+                return "Mythic";
+        }
+    }),
+    secret: z.string()
+});
+
+export type SuggestGJStarsInput = z.infer<typeof suggestGJStarsSchema>;
+
+export const rateGJStarsSchema = z.object({
+    accountID: z.coerce.number().int(),
+    gjp2: z.string(),
+    levelID: z.coerce.number().int(),
+    stars: z.coerce.number().int(),
+    secret: z.string()
+});
+
+export type RateGJStarsInput = z.infer<typeof rateGJStarsSchema>;
+
+export const rateGJDemonSchema = z.object({
+    accountID: z.coerce.number().int(),
+    gjp2: z.string(),
+    levelID: z.coerce.number().int(),
+    rating: z.enum(["1", "2", "3", "4", "5"]).transform(value => {
+        switch (value) {
+            case "1":
+                return "EasyDemon";
+            case "2":
+                return "MediumDemon";
+            case "3":
+                return "HardDemon";
+            case "4":
+                return "InsaneDemon";
+            case "5":
+                return "ExtremeDemon";
+        }
+    }),
+    mode: z.string().transform(value => {
+        switch (value) {
+            case "1":
+                return "Mod";
+            default:
+                return "User";
+        }
+    }).catch("User"),
+    secret: z.string()
+});
+
+export type RateGJDemonInput = z.infer<typeof rateGJDemonSchema>;

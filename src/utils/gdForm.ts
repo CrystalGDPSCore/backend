@@ -17,3 +17,25 @@ export function stringToGdObj(data: string, sep: string = ":") {
 
     return Object.fromEntries(result);
 }
+
+export function getDifficultyFromStars(stars: number) {
+    switch (stars) {
+        case 2:
+            return "Easy";
+        case 3:
+            return "Normal";
+        case 4:
+        case 5:
+            return "Hard";
+        case 6:
+        case 7:
+            return "Harder";
+        case 8:
+        case 9:
+            return "Insane";
+        case 10:
+            return "Demon";
+        default:
+            return "Auto";
+    }
+}

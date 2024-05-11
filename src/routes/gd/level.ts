@@ -7,7 +7,11 @@ import {
     getGJLevelsController,
     downloadGJLevelController,
     getGJDailyLevelController,
-    deleteGJLevelUserController
+    deleteGJLevelUserController,
+    updateGJDescController,
+    suggestGJStarsController,
+    rateGJStarsController,
+    rateGJDemonController
 } from "../../controllers/gd/level";
 
 import checkSecret from "../../middlewares/checkSecret";
@@ -17,7 +21,11 @@ import {
     getGJLevelsSchema,
     downloadGJLevelSchema,
     getGJDailyLevelSchema,
-    deleteGJLevelUserSchema
+    deleteGJLevelUserSchema,
+    updateGJDescSchema,
+    suggestGJStarsSchema,
+    rateGJStarsSchema,
+    rateGJDemonSchema
 } from "../../schemas/gd/level";
 
 import { Secret } from "../../helpers/enums";
@@ -57,4 +65,32 @@ export default async function gdLevelRoutes(fastify: FastifyInstance) {
             body: deleteGJLevelUserSchema
         }
     }, deleteGJLevelUserController);
+
+    fastify.withTypeProvider<ZodTypeProvider>().post("/updateGJDesc20.php", {
+        preHandler: checkSecret(Secret.Common),
+        schema: {
+            body: updateGJDescSchema
+        }
+    }, updateGJDescController);
+
+    fastify.withTypeProvider<ZodTypeProvider>().post("/suggestGJStars20.php", {
+        preHandler: checkSecret(Secret.Mod),
+        schema: {
+            body: suggestGJStarsSchema
+        }
+    }, suggestGJStarsController);
+
+    fastify.withTypeProvider<ZodTypeProvider>().post("/rateGJStars211.php", {
+        preHandler: checkSecret(Secret.Common),
+        schema: {
+            body: rateGJStarsSchema
+        }
+    }, rateGJStarsController);
+
+    fastify.withTypeProvider<ZodTypeProvider>().post("/rateGJDemon21.php", {
+        preHandler: checkSecret(Secret.Mod),
+        schema: {
+            body: rateGJDemonSchema
+        }
+    }, rateGJDemonController);
 }

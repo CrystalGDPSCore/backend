@@ -12,31 +12,32 @@ datasource db {
 }
 
 model User {
-  id                  Int                 @id @unique @default(autoincrement())
-  userName            String              @unique
-  hashPassword        String
-  email               String
-  messageState        MessageState        @default(All)
-  friendRequestState  FriendRequestState  @default(All)
-  commentHistoryState CommentHistoryState @default(All)
-  youtube             String?
-  twitter             String?
-  twitch              String?
-  modLevel            ModLevel            @default(None)
+  id                       Int                      @id @unique @default(autoincrement())
+  userName                 String                   @unique
+  hashPassword             String
+  email                    String
+  messageState             MessageState             @default(All)
+  friendRequestState       FriendRequestState       @default(All)
+  commentHistoryState      CommentHistoryState      @default(All)
+  youtube                  String?
+  twitter                  String?
+  twitch                   String?
+  modLevel                 ModLevel                 @default(None)
   /// HEX format without "#"
-  commentColor        String?
-  modRequested        Boolean             @default(false)
-  isDisabled          Boolean             @default(false)
-  registerDate        DateTime            @default(now()) @db.Timestamptz(6)
-  blocks              BlockList?
-  comments            Comment[]
-  friends             FriendList?
-  friendRequests      FriendRequest[]
-  levels              Level[]
-  messages            Message[]
-  suggestLevels       SuggestLevel[]
-  userComments        UserComment[]
-  stats               UserStats?
+  commentColor             String?
+  modRequested             Boolean                  @default(false)
+  isDisabled               Boolean                  @default(false)
+  registerDate             DateTime                 @default(now()) @db.Timestamptz(6)
+  blocks                   BlockList?
+  comments                 Comment[]
+  friends                  FriendList?
+  friendRequests           FriendRequest[]
+  levels                   Level[]
+  messages                 Message[]
+  suggestLevelDifficulties SuggestLevelDifficulty[]
+  suggestLevels            SuggestLevel[]
+  userComments             UserComment[]
+  stats                    UserStats?
 
   @@map("users")
 }
@@ -87,35 +88,36 @@ model UserComment {
 }
 
 model Level {
-  id               Int           @id
-  authorId         Int
-  name             String
-  description      String?
-  version          Int
-  length           LevelLength
-  visibility       Visibility
-  difficulty       Difficulty    @default(NA)
-  ratingType       LevelRating   @default(None)
-  originalLevelId  Int
-  requestedStars   Int
-  stars            Int           @default(0)
-  coins            Int
-  likes            Int           @default(0)
-  downloads        Int           @default(0)
-  objectsCount     Int
-  defaultSongId    Int
-  sfxIds           Int[]
-  songIds          Int[]
-  isCustomSong     Boolean
-  isCoinsVerified  Boolean       @default(false)
-  hasLdm           Boolean
-  hasTwoPlayerMode Boolean
-  createDate       DateTime      @default(now()) @db.Timestamptz(6)
-  updateDate       DateTime      @default(now()) @db.Timestamptz(6)
-  rateDate         DateTime?     @db.Timestamptz(6)
-  event            Event?
-  author           User          @relation(fields: [authorId], references: [id])
-  suggest          SuggestLevel?
+  id                  Int                      @id
+  authorId            Int
+  name                String
+  description         String?
+  version             Int
+  length              LevelLength
+  visibility          Visibility
+  difficulty          Difficulty               @default(NA)
+  ratingType          LevelRating              @default(None)
+  originalLevelId     Int
+  requestedStars      Int
+  stars               Int                      @default(0)
+  coins               Int
+  likes               Int                      @default(0)
+  downloads           Int                      @default(0)
+  objectsCount        Int
+  defaultSongId       Int
+  sfxIds              Int[]
+  songIds             Int[]
+  isCustomSong        Boolean
+  isCoinsVerified     Boolean                  @default(false)
+  hasLdm              Boolean
+  hasTwoPlayerMode    Boolean
+  createDate          DateTime                 @default(now()) @db.Timestamptz(6)
+  updateDate          DateTime                 @default(now()) @db.Timestamptz(6)
+  rateDate            DateTime?                @db.Timestamptz(6)
+  event               Event?
+  author              User                     @relation(fields: [authorId], references: [id])
+  suggestDifficulties SuggestLevelDifficulty[]
+  suggest             SuggestLevel?
 
   @@map("levels")
 }
@@ -152,14 +154,29 @@ model MapPack {
 }
 
 model SuggestLevel {
+  id          Int               @id @default(autoincrement())
+  suggestById Int
+  levelId     Int               @unique
+  difficulty  SuggestDifficulty
+  ratingType  LevelRating
+  stars       Int
+  suggestDate DateTime          @default(now()) @db.Timestamptz(6)
+  level       Level             @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  suggestBy   User              @relation(fields: [suggestById], references: [id])
+
+  @@map("suggestLevels")
+}
+
+model SuggestLevelDifficulty {
   id          Int      @id @default(autoincrement())
   suggestById Int
-  levelId     Int      @unique
+  levelId     Int
+  stars       Int
   suggestDate DateTime @default(now()) @db.Timestamptz(6)
   level       Level    @relation(fields: [levelId], references: [id], onDelete: Cascade)
   suggestBy   User     @relation(fields: [suggestById], references: [id])
 
-  @@map("suggestLevels")
+  @@map("suggestLevelDifficulties")
 }
 
 model Comment {
@@ -333,6 +350,16 @@ enum MapPackDifficulty {
   HardDemon
   InsaneDemon
   ExtremeDemon
+}
+
+enum SuggestDifficulty {
+  Auto
+  Easy
+  Normal
+  Hard
+  Harder
+  Insane
+  Demon
 }
 
 enum EventType {

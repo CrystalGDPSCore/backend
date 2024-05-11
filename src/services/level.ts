@@ -2,7 +2,9 @@ import { Prisma } from "@prisma/client";
 
 import { db } from "../utils/db";
 
-import { CreateLevelInput, UpdateLevelInput } from "../schemas/service/level";
+import { CreateLevelInput, UpdateLevelInput, RateLevelInput } from "../schemas/service/level";
+
+import { SelectDemonDifficulty } from "../helpers/enums";
 
 export async function levelExists(levelId: number) {
     const level = await db.level.findUnique({
@@ -74,4 +76,67 @@ export async function deleteLevel(levelId: number) {
     });
 
     return level;
+}
+
+export async function updateLevelDescription(levelId: number, description: string) {
+    const level = await db.level.update({
+        where: {
+            id: levelId
+        },
+        data: {
+            description: description
+        }
+    });
+
+    return level;
+}
+
+export async function rateLevel(levelId: number, input: RateLevelInput) {
+    const level = await db.level.findUnique({
+        where: {
+            id: levelId
+        }
+    });
+
+    await db.suggestLevel.deleteMany({
+        where: {
+            levelId
+        }
+    });
+
+    await db.suggestLevelDifficulty.deleteMany({
+        where: {
+            levelId
+        }
+    });
+
+    if (level!.coins > 0) {
+        input = Object.assign(input, { isCoinsVerified: true });
+    }
+
+    if (level!.rateDate == null) {
+        input = Object.assign(input, { rateDate: new Date() });
+    }
+
+    const updatedLevel = await db.level.update({
+        where: {
+            id: levelId
+        },
+        data: input
+    });
+
+    return updatedLevel;
+}
+
+export async function rateLevelDemon(levelId: number, difficulty: keyof typeof SelectDemonDifficulty) {
+    const updatedLevel = await db.level.update({
+        where: {
+            id: levelId
+        },
+        data: {
+            difficulty
+        }
+    });
+
+    return updateLevel;
 }

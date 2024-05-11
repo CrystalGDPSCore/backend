@@ -12,7 +12,11 @@ import {
     GetGJLevelsInput,
     DownloadGJLevelInput,
     GetGJDailyLevelInput,
-    DeleteGJLevelUserInput
+    DeleteGJLevelUserInput,
+    SuggestGJStarsInput,
+    UpdateGJDescInput,
+    RateGJStarsInput,
+    RateGJDemonInput
 } from "../../schemas/gd/level";
 
 import {
@@ -22,17 +26,21 @@ import {
     getLevelById,
     getLevels,
     getLevelsCount,
-    deleteLevel
+    deleteLevel,
+    updateLevelDescription,
+    rateLevel,
+    rateLevelDemon
 } from "../../services/level";
 import { getUserById, getUsers } from "../../services/user";
 import { getGauntletLevels } from "../../services/gauntlet";
 import { getSongs } from "../../services/song";
 import { getFriendList, friendExists } from "../../services/friendList";
-import { getSuggestLevelIds } from "../../services/suggestLevel";
+import { getSuggestLevelIds, createLevelSuggest, suggestLevelExists } from "../../services/suggestLevel";
+import { createDifficultySuggest } from "../../services/suggestLevelDifficulty";
 import { getEvent, getEventLevel, getEventLevelIds } from "../../services/event";
 
 import { checkUserGjp2, safeBase64Decode, hashGdObj, base64Encode, hashGdLevel } from "../../utils/crypt";
-import { gdObjToString } from "../../utils/gdForm";
+import { gdObjToString, getDifficultyFromStars } from "../../utils/gdForm";
 import { getRelativeTime } from "../../utils/relativeTime";
 
 import { ReturnLevelDifficulty, LevelLength, SelectDemonDifficulty, Salt, LevelRatingType, ReturnDemonDifficulty } from "../../helpers/enums";
@@ -664,4 +672,145 @@ export async function deleteGJLevelUserController(request: FastifyRequest<{ Body
     await deleteLevel(levelID);
 
     return reply.send(1);
+}
+
+export async function updateGJDescController(request: FastifyRequest<{ Body: UpdateGJDescInput }>, reply: FastifyReply) {
+    const { accountID, gjp2, levelID, levelDesc } = request.body;
+
+    const user = await getUserById(accountID);
+
+    if (!user || user.isDisabled) {
+        return reply.send(-1);
+    }
+
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
+        return reply.send(-1);
+    }
+
+    if (!await levelExists(levelID)) {
+        return reply.send(-1);
+    }
+
+    const description = safeBase64Decode(levelDesc);
+
+    if (description.length > 140) {
+        return reply.send(-1);
+    }
+
+    await updateLevelDescription(levelID, description);
+
+    return reply.send(1);
+}
+
+export async function suggestGJStarsController(request: FastifyRequest<{ Body: SuggestGJStarsInput }>, reply: FastifyReply) {
+    const { accountID, gjp2, levelID, stars, feature } = request.body;
+
+    const user = await getUserById(accountID);
+
+    if (!user || user.isDisabled) {
+        return reply.send(-1);
+    }
+
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
+        return reply.send(-1);
+    }
+
+    if (!await levelExists(levelID)) {
+        return reply.send(-1);
+    }
+
+    if (["None", "LeaderboardMod"].includes(user.modLevel)) {
+        return reply.send(-1);
+    }
+
+    let ability: "Suggest" | "Rate" = "Suggest";
+
+    if (["ElderMod", "Admin"].includes(user.modLevel)) {
+        ability = "Rate";
+    }
+
+    switch (ability) {
+        case "Suggest":
+            if (await suggestLevelExists(levelID)) {
+                return reply.send(-1);
+            }
+
+            await createLevelSuggest({
+                suggestById: accountID,
+                levelId: levelID,
+                difficulty: getDifficultyFromStars(stars),
+                ratingType: feature,
+                stars
+            });
+            break;
+        case "Rate":
+            let difficulty = getDifficultyFromStars(stars) as "Auto" | "Easy" | "Normal" | "Hard" | "Harder" | "Insane" | "HardDemon";
+
+            if (getDifficultyFromStars(stars) == "Demon") {
+                difficulty = "HardDemon";
+            }
+
+            await rateLevel(levelID, {
+                difficulty,
+                ratingType: feature,
+                stars
+            });
+            break;
+    }
+
+    return reply.send(1);
+}
+
+export async function rateGJStarsController(request: FastifyRequest<{ Body: RateGJStarsInput }>, reply: FastifyReply) {
+    const { accountID, gjp2, levelID, stars } = request.body;
+
+    const user = await getUserById(accountID);
+
+    if (!user || user.isDisabled) {
+        return reply.send(-1);
+    }
+
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
+        return reply.send(-1);
+    }
+
+    const level = await getLevelById(levelID);
+
+    if (!level || level.stars != 0) {
+        return reply.send(-1);
+    }
+
+    await createDifficultySuggest({
+        suggestById: accountID,
+        levelId: levelID,
+        stars
+    });
+
+    return reply.send(1);
+}
+
+export async function rateGJDemonController(request: FastifyRequest<{ Body: RateGJDemonInput }>, reply: FastifyReply) {
+    const { accountID, gjp2, levelID, rating, mode } = request.body;
+
+    const user = await getUserById(accountID);
+
+    if (!user || user.isDisabled) {
+        return reply.send(-1);
+    }
+
+    if (!checkUserGjp2(gjp2, user.hashPassword)) {
+        return reply.send(-1);
+    }
+
+    if (!await levelExists(levelID)) {
+        return reply.send(-1);
+    }
+
+    if (mode == "User" || !["ElderMod", "Admin"].includes(user.modLevel)) {
+        return reply.send(-1);
+    }
+
+    await rateLevelDemon(levelID, rating);
+
+    return reply.send(levelID);
 }

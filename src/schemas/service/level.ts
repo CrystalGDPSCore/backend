@@ -1,4 +1,7 @@
+import { LevelLength, Visibility, SuggestDifficulty, LevelRating } from "@prisma/client";
+
 import { z } from "zod";
+
 
 const createLevelSchema = z.object({
     id: z.number().int(),
@@ -6,8 +9,8 @@ const createLevelSchema = z.object({
     name: z.string(),
     description: z.string(),
     version: z.number().int(),
-    length: z.enum(["Tiny", "Short", "Medium", "Long", "XL", "Platformer"]),
-    visibility: z.enum(["Listed", "FriendsOnly", "Unlisted"]),
+    length: z.nativeEnum(LevelLength),
+    visibility: z.nativeEnum(Visibility),
     originalLevelId: z.number().int(),
     requestedStars: z.number().int(),
     coins: z.number().int(),
@@ -25,8 +28,8 @@ export type CreateLevelInput = z.infer<typeof createLevelSchema>;
 const updateLevelSchema = z.object({
     description: z.string(),
     version: z.number().int(),
-    length: z.enum(["Tiny", "Short", "Medium", "Long", "XL", "Platformer"]),
-    visibility: z.enum(["Listed", "FriendsOnly", "Unlisted"]),
+    length: z.nativeEnum(LevelLength),
+    visibility: z.nativeEnum(Visibility),
     requestedStars: z.number().int(),
     coins: z.number().int(),
     objectsCount: z.number().int(),
@@ -40,3 +43,11 @@ const updateLevelSchema = z.object({
 });
 
 export type UpdateLevelInput = z.infer<typeof updateLevelSchema>;
+
+const rateLevelSchema = z.object({
+    difficulty: z.enum(["Auto", "Easy", "Normal", "Hard", "Harder", "Insane", "HardDemon"]),
+    ratingType: z.nativeEnum(LevelRating),
+    stars: z.number().int()
+});
+
+export type RateLevelInput = z.infer<typeof rateLevelSchema>;
