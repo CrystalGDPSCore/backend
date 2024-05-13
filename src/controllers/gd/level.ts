@@ -698,7 +698,7 @@ export async function updateGJDescController(request: FastifyRequest<{ Body: Upd
 
     const description = safeBase64Decode(levelDesc);
 
-    if (description.length > 140) {
+    if (description.length > 180) {
         return reply.send(-1);
     }
 
