@@ -138,5 +138,5 @@ export async function rateLevelDemon(levelId: number, difficulty: keyof typeof S
         }
     });
 
-    return updateLevel;
+    return updatedLevel;
 }

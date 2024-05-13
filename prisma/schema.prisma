@@ -32,6 +32,7 @@ model User {
   comments                 Comment[]
   friends                  FriendList?
   friendRequests           FriendRequest[]
+  levelDownloads           LevelDownload[]
   levels                   Level[]
   messages                 Message[]
   suggestLevelDifficulties SuggestLevelDifficulty[]
@@ -179,17 +180,28 @@ model SuggestLevelDifficulty {
   @@map("suggestLevelDifficulties")
 }
 
+model LevelDownload {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  levelId      Int
+  downloadDate DateTime @default(now()) @db.Timestamptz(6)
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, levelId])
+  @@map("levelDownloads")
+}
+
 model Comment {
-  id          Int      @id @default(autoincrement())
-  userId      Int
-  itemId      Int
-  comment     String
-  percent     Int      @default(0)
-  likes       Int      @default(0)
-  isSpam      Boolean  @default(false)
-  isLevelList Boolean  @default(false)
-  postDate    DateTime @default(now()) @db.Timestamptz(6)
-  user        User     @relation(fields: [userId], references: [id])
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  itemId   Int
+  comment  String
+  percent  Int      @default(0)
+  likes    Int      @default(0)
+  isSpam   Boolean  @default(false)
+  isList   Boolean  @default(false)
+  postDate DateTime @default(now()) @db.Timestamptz(6)
+  user     User     @relation(fields: [userId], references: [id])
 
   @@map("comments")
 }
@@ -216,6 +228,7 @@ model FriendRequest {
   sendDate    DateTime @default(now()) @db.Timestamptz(6)
   user        User     @relation(fields: [userId], references: [id])
 
+  @@unique([userId, recipientId])
   @@map("friendRequests")
 }
 

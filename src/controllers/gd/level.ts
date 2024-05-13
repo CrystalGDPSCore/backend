@@ -37,6 +37,7 @@ import { getSongs } from "../../services/song";
 import { getFriendList, friendExists } from "../../services/friendList";
 import { getSuggestLevelIds, createLevelSuggest, suggestLevelExists } from "../../services/suggestLevel";
 import { createDifficultySuggest } from "../../services/suggestLevelDifficulty";
+import { levelDownloadExists, createLevelDownload } from "../../services/levelDownload";
 import { getEvent, getEventLevel, getEventLevelIds } from "../../services/event";
 
 import { checkUserGjp2, safeBase64Decode, hashGdObj, base64Encode, hashGdLevel } from "../../utils/crypt";
@@ -537,6 +538,10 @@ export async function downloadGJLevelController(request: FastifyRequest<{ Body: 
 
     if (!userTarget || userTarget.isDisabled) {
         return reply.send(-1);
+    }
+
+    if (!await levelDownloadExists(accountID, levelID)) {
+        await createLevelDownload(accountID, levelID);
     }
 
     const isLevelDemon = Object.keys(SelectDemonDifficulty).includes(level.difficulty) ? 1 : 0;
