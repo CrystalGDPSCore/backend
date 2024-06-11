@@ -196,10 +196,10 @@ model Comment {
   userId   Int
   itemId   Int
   comment  String
-  percent  Int      @default(0)
+  percent  Int?
   likes    Int      @default(0)
+  isList   Boolean
   isSpam   Boolean  @default(false)
-  isList   Boolean  @default(false)
   postDate DateTime @default(now()) @db.Timestamptz(6)
   user     User     @relation(fields: [userId], references: [id])
 

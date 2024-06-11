@@ -27,7 +27,8 @@
         "addSong": 300,
         "uploadUserComment": 5,
         "uploadMessage": 5,
-        "uploadLevel": 30
+        "uploadLevel": 30,
+        "uploadComment": 15
     },
     "chests": {
         "small": {

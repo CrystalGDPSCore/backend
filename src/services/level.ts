@@ -75,6 +75,19 @@ export async function deleteLevel(levelId: number) {
         }
     });
 
+    await db.comment.deleteMany({
+        where: {
+            itemId: levelId,
+            isList: false
+        }
+    });
+
+    await db.levelDownload.deleteMany({
+        where: {
+            levelId
+        }
+    });
+
     return level;
 }
 

@@ -668,7 +668,7 @@ export async function deleteGJLevelUserController(request: FastifyRequest<{ Body
         return reply.send(-1);
     }
 
-    if (accountID != level.authorId && !["Mod", "ElderMod", "Admin"].includes(user.modLevel)) {
+    if (accountID != level.authorId && ["None", "LeaderboardMod"].includes(user.modLevel)) {
         return reply.send(-1);
     }
 
