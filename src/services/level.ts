@@ -22,7 +22,10 @@ export async function levelExists(levelId: number) {
 
 export async function createLevel(input: CreateLevelInput) {
     const level = await db.level.create({
-        data: input
+        data: {
+            ...input,
+            version: 1
+        }
     });
 
     return level;
@@ -33,7 +36,13 @@ export async function updateLevel(levelId: number, input: UpdateLevelInput) {
         where: {
             id: levelId
         },
-        data: input
+        data: {
+            ...input,
+            version: {
+                increment: 1
+            },
+            updateDate: new Date()
+        }
     });
 
     return level;

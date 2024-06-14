@@ -1,5 +1,3 @@
-import { SuggestDifficulty } from "@prisma/client";
-
 import { z } from "zod";
 
 export const uploadGJLevelSchema = z.object({
@@ -8,7 +6,6 @@ export const uploadGJLevelSchema = z.object({
     levelID: z.coerce.number().int(),
     levelName: z.string(),
     levelDesc: z.string(),
-    levelVersion: z.coerce.number().int(),
     levelLength: z.enum(["0", "1", "2", "3", "4", "5"]).transform(value => {
         switch (value) {
             case "0":

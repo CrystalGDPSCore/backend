@@ -1,14 +1,12 @@
-import { LevelLength, Visibility, SuggestDifficulty, LevelRating } from "@prisma/client";
+import { LevelLength, Visibility, LevelRating } from "@prisma/client";
 
 import { z } from "zod";
-
 
 const createLevelSchema = z.object({
     id: z.number().int(),
     authorId: z.number().int(),
     name: z.string(),
     description: z.string(),
-    version: z.number().int(),
     length: z.nativeEnum(LevelLength),
     visibility: z.nativeEnum(Visibility),
     originalLevelId: z.number().int(),
@@ -27,7 +25,6 @@ export type CreateLevelInput = z.infer<typeof createLevelSchema>;
 
 const updateLevelSchema = z.object({
     description: z.string(),
-    version: z.number().int(),
     length: z.nativeEnum(LevelLength),
     visibility: z.nativeEnum(Visibility),
     requestedStars: z.number().int(),
@@ -38,8 +35,7 @@ const updateLevelSchema = z.object({
     songIds: z.array(z.number().int()),
     isCustomSong: z.boolean(),
     hasLdm: z.boolean(),
-    hasTwoPlayerMode: z.boolean(),
-    updateDate: z.date()
+    hasTwoPlayerMode: z.boolean()
 });
 
 export type UpdateLevelInput = z.infer<typeof updateLevelSchema>;

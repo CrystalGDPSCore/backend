@@ -55,7 +55,6 @@ export async function uploadGJLevelController(request: FastifyRequest<{ Body: Up
         levelID,
         levelName,
         levelDesc,
-        levelVersion,
         levelLength,
         audioTrack,
         original,
@@ -105,7 +104,6 @@ export async function uploadGJLevelController(request: FastifyRequest<{ Body: Up
 
     const levelInfoObj = {
         description,
-        version: levelVersion,
         length: levelLength,
         visibility: unlisted,
         requestedStars,
@@ -126,10 +124,7 @@ export async function uploadGJLevelController(request: FastifyRequest<{ Body: Up
             return reply.send(-1);
         }
 
-        const level = await updateLevel(levelID, {
-            ...levelInfoObj,
-            updateDate: new Date()
-        });
+        const level = await updateLevel(levelID, levelInfoObj);
 
         writeFileSync(path.join(__dirname, "../../../", "data", "levels", `${level.id}.lvl`), levelString);
 
