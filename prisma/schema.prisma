@@ -33,6 +33,7 @@ model User {
   friends                  FriendList?
   friendRequests           FriendRequest[]
   levelDownloads           LevelDownload[]
+  levelLists               LevelList[]
   levels                   Level[]
   messages                 Message[]
   suggestLevelDifficulties SuggestLevelDifficulty[]
@@ -189,6 +190,29 @@ model LevelDownload {
 
   @@unique([userId, levelId])
   @@map("levelDownloads")
+}
+
+model LevelList {
+  id             Int        @id @default(autoincrement())
+  authorId       Int
+  name           String
+  description    String?
+  version        Int
+  visibility     Visibility
+  difficulty     Difficulty
+  ratingType     ListRating @default(None)
+  originalListId Int
+  likes          Int        @default(0)
+  downloads      Int        @default(0)
+  reward         Int        @default(0)
+  levelsToReward Int        @default(0)
+  levelIds       Int[]
+  createDate     DateTime   @default(now()) @db.Timestamptz(6)
+  updateDate     DateTime   @default(now()) @db.Timestamptz(6)
+  rateDate       DateTime?
+  author         User       @relation(fields: [authorId], references: [id])
+
+  @@map("levelLists")
 }
 
 model Comment {

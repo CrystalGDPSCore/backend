@@ -28,7 +28,8 @@
         "uploadUserComment": 5,
         "uploadMessage": 5,
         "uploadLevel": 30,
-        "uploadComment": 15
+        "uploadComment": 15,
+        "uploadLevelList": 30
     },
     "chests": {
         "small": {

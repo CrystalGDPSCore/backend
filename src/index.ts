@@ -20,6 +20,7 @@ import gdCustomContentRoutes from "./routes/gd/customContent";
 import gdFriendRequestRoutes from "./routes/gd/friendRequest";
 import gdLevelRoutes from "./routes/gd/level";
 import gdLevelPackRoutes from "./routes/gd/levelPack";
+import gdLevelListRoutes from "./routes/gd/levelList";
 import gdMessageRoutes from "./routes/gd/message";
 import gdRelationshipRoutes from "./routes/gd/relationship";
 import gdRewardRoutes from "./routes/gd/reward";
@@ -70,6 +71,7 @@ async function main() {
         gdFriendRequestRoutes,
         gdLevelRoutes,
         gdLevelPackRoutes,
+        gdLevelListRoutes,
         gdMessageRoutes,
         gdRelationshipRoutes,
         gdRewardRoutes,
