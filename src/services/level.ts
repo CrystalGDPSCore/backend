@@ -91,9 +91,10 @@ export async function deleteLevel(levelId: number) {
         }
     });
 
-    await db.levelDownload.deleteMany({
+    await db.download.deleteMany({
         where: {
-            levelId
+            itemId: levelId,
+            isList: false
         }
     });
 
@@ -106,7 +107,7 @@ export async function updateLevelDescription(levelId: number, description: strin
             id: levelId
         },
         data: {
-            description: description
+            description
         }
     });
 

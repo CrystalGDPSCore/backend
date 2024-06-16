@@ -80,6 +80,21 @@ export enum ReturnDemonDifficulty {
     ExtremeDemon
 }
 
+export enum ReturnListDifficulty {
+    NA = -1,
+    Auto,
+    Easy,
+    Normal,
+    Hard,
+    Harder,
+    Insane,
+    EasyDemon,
+    MediumDemon,
+    HardDemon,
+    InsaneDemon,
+    ExtremeDemon
+}
+
 export enum MapPackDifficulty {
     Auto,
     Easy,

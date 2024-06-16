@@ -37,8 +37,9 @@ import { getSongs } from "../../services/song";
 import { getFriendList, friendExists } from "../../services/friendList";
 import { getSuggestLevelIds, createLevelSuggest, suggestLevelExists } from "../../services/suggestLevel";
 import { createDifficultySuggest } from "../../services/suggestLevelDifficulty";
-import { levelDownloadExists, createLevelDownload } from "../../services/levelDownload";
+import { downloadExists, createDownload } from "../../services/download";
 import { getEvent, getEventLevel, getEventLevelIds } from "../../services/event";
+import { getListById } from "../../services/levelList";
 
 import { checkUserGjp2, safeBase64Decode, hashGdObj, base64Encode, hashGdLevel } from "../../utils/crypt";
 import { gdObjToString, getDifficultyFromStars } from "../../utils/gdForm";
@@ -199,6 +200,8 @@ export async function getGJLevelsController(request: FastifyRequest<{ Body: GetG
         return reply.send(-1);
     }
 
+    console.log(request.body);
+
     const levelArgsObj: Prisma.LevelWhereInput = {
         visibility: "Listed"
     };
@@ -312,7 +315,6 @@ export async function getGJLevelsController(request: FastifyRequest<{ Body: GetG
                 levelOrderByObj[0].createDate = "desc";
                 break;
             case "Trending":
-                levelOrderByObj[0].likes = "desc";
                 levelArgsObj.createDate = { gt: new Date(Date.now() - 7 * 24 * 60 * 60000) };
                 break;
             case "UserLevels":
@@ -388,7 +390,24 @@ export async function getGJLevelsController(request: FastifyRequest<{ Body: GetG
                 levelArgsObj.id = { in: eventLevelIds };
                 break;
             case "LevelList":
-                return reply.send(-1);
+                if (!(str && typeof str == "number")) {
+                    return reply.send(-1);
+                }
+
+                delete levelArgsObj.id;
+
+                const levelList = await getListById(str);
+
+                if (!levelList) {
+                    return reply.send(-1);
+                }
+
+                if (!await downloadExists(accountID, str, true)) {
+                    await createDownload(accountID, str, true);
+                }
+
+                levelArgsObj.id = { in: levelList.levelIds };
+                break;
             case "Sent":
                 delete levelOrderByObj[0].likes;
                 Object.keys(levelArgsObj).forEach(key => delete levelArgsObj[key as keyof typeof levelArgsObj]);
@@ -535,8 +554,8 @@ export async function downloadGJLevelController(request: FastifyRequest<{ Body: 
         return reply.send(-1);
     }
 
-    if (!await levelDownloadExists(accountID, levelID)) {
-        await createLevelDownload(accountID, levelID);
+    if (!await downloadExists(accountID, levelID, false)) {
+        await createDownload(accountID, levelID, false);
     }
 
     const isLevelDemon = Object.keys(SelectDemonDifficulty).includes(level.difficulty) ? 1 : 0;

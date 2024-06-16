@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 import { db } from "../utils/db";
 
 import { CreateLevelListInput, UpdateLevelListInput } from "../schemas/service/levelList";
@@ -41,5 +43,58 @@ export async function updateList(listId: number, input: UpdateLevelListInput) {
         }
     });
 
+    return levelList;
+}
+
+export async function getLists(args: Prisma.LevelListWhereInput, orderBy: Array<Prisma.LevelListOrderByWithRelationInput>, offset: number) {
+    const levelLists = await db.levelList.findMany({
+        where: args,
+        take: 10,
+        skip: offset,
+        orderBy
+    });
+
+    return levelLists;
+}
+
+export async function getListsCount(args: Prisma.LevelListWhereInput) {
+    const levelListsCount = await db.levelList.count({
+        where: args
+    });
+
+    return levelListsCount;
+}
+
+export async function getListById(listId: number) {
+    const levelList = await db.levelList.findUnique({
+        where: {
+            id: listId
+        }
+    });
+
+    return levelList;
+}
+
+export async function deleteList(listId: number) {
+    const levelList = await db.levelList.delete({
+        where: {
+            id: listId
+        }
+    });
+
+    await db.comment.deleteMany({
+        where: {
+            itemId: listId,
+            isList: true
+        }
+    });
+
+    await db.download.deleteMany({
+        where: {
+            itemId: listId,
+            isList: true
+        }
+    });
+    
     return levelList;
 }

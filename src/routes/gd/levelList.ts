@@ -2,11 +2,11 @@ import { FastifyInstance } from "fastify";
 
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 
-import { uploadGJLevelListController } from "../../controllers/gd/levelList";
+import { deleteGJLevelListController, getGJLevelListsController, uploadGJLevelListController } from "../../controllers/gd/levelList";
 
 import checkSecret from "../../middlewares/checkSecret";
 
-import { uploadGJLevelListSchema } from "../../schemas/gd/levelList";
+import { deleteGJLevelListSchema, getGJLevelListsSchema, uploadGJLevelListSchema } from "../../schemas/gd/levelList";
 
 import { Secret } from "../../helpers/enums";
 
@@ -17,4 +17,18 @@ export default async function gdLevelListRoutes(fastify: FastifyInstance) {
             body: uploadGJLevelListSchema
         }
     }, uploadGJLevelListController);
+
+    fastify.withTypeProvider<ZodTypeProvider>().post("/getGJLevelLists.php", {
+        preHandler: checkSecret(Secret.Common, -100),
+        schema: {
+            body: getGJLevelListsSchema
+        }
+    }, getGJLevelListsController);
+
+    fastify.withTypeProvider<ZodTypeProvider>().post("/deleteGJLevelList.php", {
+        preHandler: checkSecret(Secret.Level),
+        schema: {
+            body: deleteGJLevelListSchema
+        }
+    }, deleteGJLevelListController);
 }

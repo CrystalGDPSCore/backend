@@ -16,6 +16,7 @@ import {
     getUserCommentHistory,
     getUserCommentHistoryCount
 } from "../../services/comment";
+import { getListById } from "../../services/levelList";
 
 import { checkUserGjp2, safeBase64Decode, safeBase64Encode } from "../../utils/crypt";
 import { getRelativeTime } from "../../utils/relativeTime";
@@ -60,7 +61,15 @@ export async function uploadGJCommentController(request: FastifyRequest<{ Body: 
 
     switch (isList) {
         case true:
-            // todo: check if list exists
+            const levelList = await getListById(Math.abs(levelID));
+
+            if (!levelList) {
+                return reply.send(-1);
+            }
+
+            if (levelList.visibility == "FriendsOnly" && accountID != levelList.authorId && !await friendExists(accountID, levelList.authorId)) {
+                return reply.send(-1);
+            }
             break;
         case false:
             const level = await getLevelById(levelID);

@@ -30,9 +30,9 @@ model User {
   registerDate             DateTime                 @default(now()) @db.Timestamptz(6)
   blocks                   BlockList?
   comments                 Comment[]
+  downloads                Download[]
   friends                  FriendList?
   friendRequests           FriendRequest[]
-  levelDownloads           LevelDownload[]
   levelLists               LevelList[]
   levels                   Level[]
   messages                 Message[]
@@ -181,15 +181,16 @@ model SuggestLevelDifficulty {
   @@map("suggestLevelDifficulties")
 }
 
-model LevelDownload {
+model Download {
   id           Int      @id @default(autoincrement())
   userId       Int
-  levelId      Int
+  itemId       Int
+  isList       Boolean
   downloadDate DateTime @default(now()) @db.Timestamptz(6)
   user         User     @relation(fields: [userId], references: [id])
 
-  @@unique([userId, levelId])
-  @@map("levelDownloads")
+  @@unique([userId, itemId, isList])
+  @@map("downloads")
 }
 
 model LevelList {
@@ -262,7 +263,7 @@ model FriendList {
   friends Json[]
   user    User   @relation(fields: [userId], references: [id])
 
-  @@map("friendList")
+  @@map("friendLists")
 }
 
 model BlockList {
@@ -270,7 +271,7 @@ model BlockList {
   blockIds Int[]
   user     User  @relation(fields: [userId], references: [id])
 
-  @@map("blockList")
+  @@map("blockLists")
 }
 
 model Artist {
