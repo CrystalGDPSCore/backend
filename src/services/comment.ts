@@ -2,6 +2,20 @@ import { db } from "../utils/db";
 
 import { CreateCommentInput, GetCommentsInput, GetUserCommentHistoryInput } from "../schemas/service/comment";
 
+export async function commentExists(commentId: number) {
+    const comment = await db.comment.findUnique({
+        where: {
+            id: commentId
+        }
+    });
+
+    if (!comment) {
+        return false;
+    }
+
+    return true;
+}
+
 export async function createComment(input: CreateCommentInput) {
     const comment = await db.comment.create({
         data: input
@@ -77,6 +91,13 @@ export async function deleteComment(commentId: number, isList: boolean) {
         where: {
             id: commentId,
             isList
+        }
+    });
+
+    await db.like.deleteMany({
+        where: {
+            itemId: commentId,
+            itemType: "Comment"
         }
     });
 

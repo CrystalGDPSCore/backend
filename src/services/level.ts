@@ -98,6 +98,13 @@ export async function deleteLevel(levelId: number) {
         }
     });
 
+    await db.like.deleteMany({
+        where: {
+            itemId: levelId,
+            itemType: "Level"
+        }
+    });
+
     return level;
 }
 

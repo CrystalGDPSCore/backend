@@ -200,8 +200,6 @@ export async function getGJLevelsController(request: FastifyRequest<{ Body: GetG
         return reply.send(-1);
     }
 
-    console.log(request.body);
-
     const levelArgsObj: Prisma.LevelWhereInput = {
         visibility: "Listed"
     };

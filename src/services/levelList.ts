@@ -95,6 +95,13 @@ export async function deleteList(listId: number) {
             isList: true
         }
     });
+
+    await db.like.deleteMany({
+        where: {
+            itemId: listId,
+            itemType: "LevelList"
+        }
+    });
     
     return levelList;
 }

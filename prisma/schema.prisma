@@ -35,6 +35,7 @@ model User {
   friendRequests           FriendRequest[]
   levelLists               LevelList[]
   levels                   Level[]
+  likes                    Like[]
   messages                 Message[]
   suggestLevelDifficulties SuggestLevelDifficulty[]
   suggestLevels            SuggestLevel[]
@@ -191,6 +192,19 @@ model Download {
 
   @@unique([userId, itemId, isList])
   @@map("downloads")
+}
+
+model Like {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  itemId   Int
+  itemType ItemType
+  likeType LikeType
+  likeDate DateTime @default(now()) @db.Timestamptz(6)
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, itemId, itemType])
+  @@map("likes")
 }
 
 model LevelList {
@@ -408,4 +422,16 @@ enum EventType {
 enum ListRating {
   None
   Featured
+}
+
+enum ItemType {
+  Level
+  Comment
+  UserComment
+  LevelList
+}
+
+enum LikeType {
+  Like
+  Dislike
 }

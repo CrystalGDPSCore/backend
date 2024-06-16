@@ -1,5 +1,19 @@
 import { db } from "../utils/db";
 
+export async function userCommentExists(userCommentId: number) {
+    const userComment = await db.userComment.findUnique({
+        where: {
+            id: userCommentId
+        }
+    });
+
+    if (!userComment) {
+        return false;
+    }
+
+    return true;
+}
+
 export async function createUserComment(userId: number, comment: string) {
     const userComment = await db.userComment.create({
         data: {
@@ -31,6 +45,13 @@ export async function deleteUserComment(userId: number, commentId: number) {
         where: {
             userId,
             id: commentId
+        }
+    });
+
+    await db.like.deleteMany({
+        where: {
+            itemId: commentId,
+            itemType: "UserComment"
         }
     });
 

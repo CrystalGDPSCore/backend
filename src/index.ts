@@ -22,6 +22,7 @@ import gdLevelRoutes from "./routes/gd/level";
 import gdLevelPackRoutes from "./routes/gd/levelPack";
 import gdLevelListRoutes from "./routes/gd/levelList";
 import gdMessageRoutes from "./routes/gd/message";
+import gdMiscRoutes from "./routes/gd/misc";
 import gdRelationshipRoutes from "./routes/gd/relationship";
 import gdRewardRoutes from "./routes/gd/reward";
 import gdScoreRoutes from "./routes/gd/score";
@@ -73,6 +74,7 @@ async function main() {
         gdLevelPackRoutes,
         gdLevelListRoutes,
         gdMessageRoutes,
+        gdMiscRoutes,
         gdRelationshipRoutes,
         gdRewardRoutes,
         gdScoreRoutes,
